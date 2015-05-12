@@ -14,3 +14,12 @@ Common Java library.
     }
     System.out.println("loop1 time: " + Time.timerStopByName("loop1") + "ms");
 
+
+
+Maven:
+
+    <dependency>
+      <groupId>com.igumnov</groupId>
+      <artifactId>common</artifactId>
+      <version>0.0.2</version>
+    </dependency>
