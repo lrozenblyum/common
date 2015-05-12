@@ -42,6 +42,31 @@ public class TimeTest {
 
     }
 
+
+    @Test
+    public void testTimerStartPauseResumeStopByName() throws Exception {
+        String name = "test";
+        Time.timerStartByName(name);
+        Time.pauseInSeconds(1);
+        long pause1 = Time.timerPauseByName(name);
+        assertTrue("1 sec", pause1 >= 1000 && pause1 <= 1500);
+
+        Time.pauseInSeconds(0.5);
+        Time.timerResumeByName(name);
+        Time.pauseInSeconds(0.5);
+        long pause2 = Time.timerPauseByName(name);
+        assertTrue("1.5 sec", pause2 >= 1500 && pause2 <= 2000);
+
+        Time.pauseInSeconds(1);
+        Time.timerResumeByName(name);
+        Time.pauseInSeconds(1);
+        long pause3 = Time.timerStopByName(name);
+        assertTrue("2.5 sec", pause3 >= 2500 && pause3 <= 3000);
+
+
+    }
+
+
     @Test
     public void testTimerStop() throws Exception {
         try {
