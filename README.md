@@ -1,3 +1,3 @@
 # common
 
-Common java library.
+Common Java library.
