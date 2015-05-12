@@ -6,6 +6,14 @@ public class Time {
     static long timerStartValue = 0;
     static long timerAccamulator = 0;
 
+    public static void delayInSeconds(double seconds) {
+        pauseInSeconds(seconds);
+    }
+
+    public static void sleepInSeconds(double seconds) {
+        pauseInSeconds(seconds);
+    }
+
     public static void pauseInSeconds(double seconds) {
         try {
             Thread.sleep((long) (1000 * seconds));
