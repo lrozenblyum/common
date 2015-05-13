@@ -1,10 +1,12 @@
 # common
 
-Common Java library.
+Common Java library:
 
 * Sleep/Delay/Pause
 * Timer for Benchmark
 * Random range generator
+
+Usage:
 
     import com.igumnov.common.*;
     
