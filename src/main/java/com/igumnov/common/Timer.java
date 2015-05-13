@@ -1,9 +1,8 @@
 package com.igumnov.common;
 
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-class Timer {
+public class Timer {
 
     //TODO change to nanoseconds
     private long startValue = 0;
@@ -11,12 +10,12 @@ class Timer {
     private long repeatCount = 0;
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public void timerStart() throws TimeException {
+    public void start() throws TimeException {
         try {
             lock.writeLock().lock();
             if (startValue != 0) {
-                timerResetValues();
-                throw new TimeException("timerStop should be call before");
+                resetValues();
+                throw new TimeException("stop should be call before");
             }
             startValue = System.currentTimeMillis();
             repeatCount++;
@@ -25,16 +24,16 @@ class Timer {
         }
     }
 
-    public long timerStop() throws TimeException {
+    public long stop() throws TimeException {
         try {
             lock.writeLock().lock();
 
             if (startValue == 0) {
-                throw new TimeException("timerStart should be call before");
+                throw new TimeException("start should be call before");
             }
             long timerStartValueOld = startValue;
             long timerAccamulatorOld = accamulator;
-            timerResetValues();
+            resetValues();
             return System.currentTimeMillis() - timerStartValueOld + timerAccamulatorOld;
         } finally {
             lock.writeLock().unlock();
@@ -42,7 +41,7 @@ class Timer {
 
     }
 
-    private void timerResetValues() {
+    private void resetValues() {
         try {
             lock.writeLock().lock();
             startValue = 0;
@@ -52,12 +51,12 @@ class Timer {
         }
     }
 
-    public long timerPause() throws TimeException {
+    public long pause() throws TimeException {
         try {
             lock.writeLock().lock();
             if (startValue == 0 && accamulator == 0) {
-                timerResetValues();
-                throw new TimeException("timerStart should be call before");
+                resetValues();
+                throw new TimeException("start should be call before");
             }
             long timerStartValueOld = startValue;
             startValue = 0;
@@ -68,14 +67,14 @@ class Timer {
         }
     }
 
-    public void timerResume() throws TimeException {
+    public void resume() throws TimeException {
         try {
             lock.writeLock().lock();
             if (startValue == 0 && accamulator == 0) {
-                throw new TimeException("timerStart should be call before");
+                throw new TimeException("start should be call before");
             }
             if (startValue != 0 && accamulator == 0) {
-                throw new TimeException("timerPause should be call before");
+                throw new TimeException("pause should be call before");
             }
             startValue = System.currentTimeMillis();
             repeatCount++;
@@ -92,7 +91,7 @@ class Timer {
             lock.readLock().unlock();
         }
     }
-    public long getAccamulator() {
+    public long getTotlaTime() {
         try {
             lock.readLock().lock();
             return accamulator;

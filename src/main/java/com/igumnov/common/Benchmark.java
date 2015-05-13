@@ -23,7 +23,7 @@ public class Benchmark {
                 timers.put(name, timer);
             }
 
-            timer.timerStart();
+            timer.start();
 
         } catch (TimeException e) {
             throw e;
@@ -40,9 +40,9 @@ public class Benchmark {
             if (timers.containsKey(name)) {
                 timer = timers.get(name);
             } else {
-                throw new TimeException("timerStart should be call before");
+                throw new TimeException("start should be call before");
             }
-            return timer.timerPause();
+            return timer.pause();
         } catch (TimeException e) {
             throw e;
         } finally {
@@ -57,9 +57,9 @@ public class Benchmark {
             if (timers.containsKey(name)) {
                 timer = timers.get(name);
             } else {
-                throw new TimeException("timerStart should be call before");
+                throw new TimeException("start should be call before");
             }
-            timer.timerResume();
+            timer.resume();
 
         } catch (TimeException e) {
             throw e;
@@ -76,10 +76,10 @@ public class Benchmark {
             if (timers.containsKey(name)) {
                 timer = timers.get(name);
             } else {
-                throw new TimeException("timerStart should be call before");
+                throw new TimeException("start should be call before");
             }
 
-            long ret = timer.timerStop();
+            long ret = timer.stop();
             timers.remove(name);
             return ret;
 
@@ -114,11 +114,11 @@ public class Benchmark {
             timersLock.writeLock().lock();
             if (timers.containsKey(name)) {
                 timer = timers.get(name);
-                timer.timerResume();
+                timer.resume();
             } else {
                 timer = new Timer();
                 timers.put(name, timer);
-                timer.timerStart();
+                timer.start();
             }
         } catch (TimeException e) {
             throw e;
@@ -140,7 +140,7 @@ public class Benchmark {
             if (timers.containsKey(name)) {
                 timer = timers.get(name);
             } else {
-                throw new TimeException("timerStart should be call before");
+                throw new TimeException("start should be call before");
             }
             return timer.getRepeatCount();
 
@@ -158,7 +158,7 @@ public class Benchmark {
             if (timers.containsKey(name)) {
                 timer = timers.get(name);
             } else {
-                throw new TimeException("timerStart should be call before");
+                throw new TimeException("start should be call before");
             }
             return timer.getAverageTime();
 
@@ -176,9 +176,9 @@ public class Benchmark {
             if (timers.containsKey(name)) {
                 timer = timers.get(name);
             } else {
-                throw new TimeException("timerStart should be call before");
+                throw new TimeException("start should be call before");
             }
-            return timer.getAccamulator();
+            return timer.getTotlaTime();
 
         } catch (TimeException e) {
             throw e;
