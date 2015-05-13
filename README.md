@@ -16,6 +16,16 @@ Common Java library.
     System.out.println("loop1 time: " + Benchmark.timerStopByName("loop1") + "ms");
 
 
+
+    Benchmark.timerStartByName("pausedTimer");
+    // do something
+    Benchmark.timerPauseByName("pausedTimer");
+    // do something
+    Benchmark.timerResumeByName("pausedTimer");
+    // do something
+    System.out.println("pausedTimer time: " + Benchmark.timerStopByName("pausedTimer") + "ms");
+
+
     for(int i = 0; i<10000 ; ++i) {
         Benchmark.timerBeginByName("loop2");
         // do something
@@ -27,10 +37,16 @@ Common Java library.
 
 
 
+    int rndInt = Number.randomIntByRange(-10, 300);
+    long rndLong = Number.randomLongByRange(-5L, -2L);
+    double rndDouble = Number.randomDoubleByRange(100.5, 2222.343);
+
+
+
 Maven:
 
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>0.0.3</version>
+      <version>0.0.4</version>
     </dependency>
