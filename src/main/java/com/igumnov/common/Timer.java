@@ -1,63 +1,113 @@
 package com.igumnov.common;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 class Timer {
-    private long timerStartValue = 0;
-    private long timerAccamulator = 0;
-    private Integer lock = new Integer(0);
+
+    //TODO change to nanoseconds
+    private long startValue = 0;
+    private long accamulator = 0;
+    private long repeatCount = 0;
+    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     public void timerStart() throws TimeException {
-        synchronized (lock) {
-            if (timerStartValue != 0) {
+        try {
+            lock.writeLock().lock();
+            if (startValue != 0) {
                 timerResetValues();
                 throw new TimeException("timerStop should be call before");
             }
-            timerStartValue = System.currentTimeMillis();
+            startValue = System.currentTimeMillis();
+            repeatCount++;
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
     public long timerStop() throws TimeException {
-        synchronized (lock) {
-            if (timerStartValue == 0) {
+        try {
+            lock.writeLock().lock();
+
+            if (startValue == 0) {
                 throw new TimeException("timerStart should be call before");
             }
-            long timerStartValueOld = timerStartValue;
-            long timerAccamulatorOld = timerAccamulator;
+            long timerStartValueOld = startValue;
+            long timerAccamulatorOld = accamulator;
             timerResetValues();
             return System.currentTimeMillis() - timerStartValueOld + timerAccamulatorOld;
+        } finally {
+            lock.writeLock().unlock();
         }
+
     }
 
     private void timerResetValues() {
-        timerStartValue = 0;
-        timerAccamulator = 0;
+        try {
+            lock.writeLock().lock();
+            startValue = 0;
+            accamulator = 0;
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     public long timerPause() throws TimeException {
-        synchronized (lock) {
-
-            if (timerStartValue == 0 && timerAccamulator == 0) {
+        try {
+            lock.writeLock().lock();
+            if (startValue == 0 && accamulator == 0) {
                 timerResetValues();
                 throw new TimeException("timerStart should be call before");
             }
-            long timerStartValueOld = timerStartValue;
-            timerStartValue = 0;
-            timerAccamulator += System.currentTimeMillis() - timerStartValueOld;
-            return timerAccamulator;
+            long timerStartValueOld = startValue;
+            startValue = 0;
+            accamulator += System.currentTimeMillis() - timerStartValueOld;
+            return accamulator;
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
     public void timerResume() throws TimeException {
-        synchronized (lock) {
-            if (timerStartValue == 0 && timerAccamulator == 0) {
+        try {
+            lock.writeLock().lock();
+            if (startValue == 0 && accamulator == 0) {
                 throw new TimeException("timerStart should be call before");
             }
-            if (timerStartValue != 0 && timerAccamulator == 0) {
+            if (startValue != 0 && accamulator == 0) {
                 throw new TimeException("timerPause should be call before");
             }
-            timerStartValue = System.currentTimeMillis();
+            startValue = System.currentTimeMillis();
+            repeatCount++;
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
+    public long getRepeatCount() {
+        try {
+            lock.readLock().lock();
+            return repeatCount;
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+    public long getAccamulator() {
+        try {
+            lock.readLock().lock();
+            return accamulator;
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    public long getAverageTime() {
+        try {
+            lock.readLock().lock();
+            return accamulator / repeatCount;
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
 
 }

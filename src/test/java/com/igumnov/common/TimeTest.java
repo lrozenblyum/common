@@ -106,5 +106,20 @@ public class TimeTest {
         }
     }
 
+    @Test
+    public void testRepeatCase() throws TimeException {
+
+        for (int i = 0; i < 100; ++i) {
+            Benchmark.timerBeginByName("loop2");
+            Time.sleepInSeconds(0.01);
+            Benchmark.timerEndByName("loop2");
+        }
+        assertEquals(Benchmark.timerGetRepeatCountByName("loop2"), 100);
+        assertTrue("timerGetAverageTime", (Benchmark.timerGetAverageTimeByName("loop2")) < Benchmark.timerGetTotalTimeByName("loop2") * 0.1);
+        assertTrue("timerGetTotalTime", (Benchmark.timerGetAverageTimeByName("loop2")) * 100 * 0.9 < Benchmark.timerGetTotalTimeByName("loop2"));
+        assertTrue("timerGetTotalTime", (Benchmark.timerGetAverageTimeByName("loop2")) * 100 * 1.1 > Benchmark.timerGetTotalTimeByName("loop2"));
+
+    }
+
 
 }
