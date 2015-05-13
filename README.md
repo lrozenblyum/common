@@ -1,10 +1,18 @@
 # common
 
+Why?
+
+A lot of questions on Stack Overflow have answer on 3-5 lines code. This library collect
+typical cases which developers copy-past in their projects. All functions in this library covered
+by JUnit test. Simply use this library to have clean and more stable code in your project.
+
+
 Common Java library:
 
 * Sleep/Delay/Pause
 * Timer for Benchmark
 * Random range generator
+
 
 Usage:
 
