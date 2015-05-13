@@ -2,6 +2,10 @@
 
 Common Java library.
 
+* Sleep/Delay/Pause
+* Timer for Benchmark
+* Random range generator
+
     import com.igumnov.common.*;
     
     Benchmark.timerStart();
