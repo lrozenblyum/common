@@ -4,7 +4,7 @@ Why?
 
 A lot of questions on Stack Overflow have answer on 3-5 lines code. This library collect
 typical cases which developers copy-past in their projects. All functions in this library covered
-by JUnit test. Simply use this library to have clean and more stable code in your project.
+by JUnit test. Simply use this small library to have clean and more stable code in your project.
 
 
 Common Java library:
@@ -12,6 +12,7 @@ Common Java library:
 * Sleep/Delay/Pause
 * Timer for Benchmark
 * Random range generator
+* File operations
 
 
 Usage:
@@ -54,6 +55,7 @@ Usage:
     long rndLong = Number.randomLongByRange(-5L, -2L);
     double rndDouble = Number.randomDoubleByRange(100.5, 2222.343);
 
+    String fileContent = File.readAllToStringByFileName("dir/somefile.txt");
 
 
 Maven:
@@ -61,5 +63,5 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>0.0.5</version>
+      <version>0.0.6</version>
     </dependency>
