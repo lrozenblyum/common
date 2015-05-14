@@ -13,6 +13,7 @@ Common Java library:
 * Timer for Benchmark
 * Random range generator
 * File operations
+* Tasks/Threads
 
 
 Usage:
@@ -28,6 +29,21 @@ Usage:
     double rndDouble = Number.randomDoubleByRange(100.5, 2222.343);
 
     String fileContent = File.readAllToStringByFileName("dir/somefile.txt");
+
+    ProcedureThread task = Task.startProcedure(() -> {
+        // Long time procedure code there
+    });
+    // Do something
+    if(task.isDone() == false) {
+       task.join(); // Wait for done
+    }
+
+    Future<Object> taskResult = Task.startFunction(() -> {
+        // Long time function code there
+        return resultObject;
+    });
+    // Do something
+    Object result = taskResult.get();
 
     Benchmark.timerStartByName("loop1");
     for(int i = 0; i<10000 ; ++i) {
@@ -64,5 +80,5 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>0.0.6</version>
+      <version>0.0.7</version>
     </dependency>

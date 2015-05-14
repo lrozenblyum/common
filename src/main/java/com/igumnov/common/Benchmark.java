@@ -40,7 +40,7 @@ public class Benchmark {
             if (timers.containsKey(name)) {
                 timer = timers.get(name);
             } else {
-                throw new TimeException("start should be call before");
+                throw new TimeException("startProcedure should be call before");
             }
             return timer.pause();
         } catch (TimeException e) {
@@ -57,7 +57,7 @@ public class Benchmark {
             if (timers.containsKey(name)) {
                 timer = timers.get(name);
             } else {
-                throw new TimeException("start should be call before");
+                throw new TimeException("startProcedure should be call before");
             }
             timer.resume();
 
@@ -76,7 +76,7 @@ public class Benchmark {
             if (timers.containsKey(name)) {
                 timer = timers.get(name);
             } else {
-                throw new TimeException("start should be call before");
+                throw new TimeException("startProcedure should be call before");
             }
 
             long ret = timer.stop();
@@ -140,7 +140,7 @@ public class Benchmark {
             if (timers.containsKey(name)) {
                 timer = timers.get(name);
             } else {
-                throw new TimeException("start should be call before");
+                throw new TimeException("startProcedure should be call before");
             }
             return timer.getRepeatCount();
 
@@ -158,7 +158,7 @@ public class Benchmark {
             if (timers.containsKey(name)) {
                 timer = timers.get(name);
             } else {
-                throw new TimeException("start should be call before");
+                throw new TimeException("startProcedure should be call before");
             }
             return timer.getAverageTime();
 
@@ -176,7 +176,7 @@ public class Benchmark {
             if (timers.containsKey(name)) {
                 timer = timers.get(name);
             } else {
-                throw new TimeException("start should be call before");
+                throw new TimeException("startProcedure should be call before");
             }
             return timer.getTotlaTime();
 

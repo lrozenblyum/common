@@ -29,7 +29,7 @@ public class Timer {
             lock.writeLock().lock();
 
             if (startValue == 0) {
-                throw new TimeException("start should be call before");
+                throw new TimeException("startProcedure should be call before");
             }
             long timerStartValueOld = startValue;
             long timerAccamulatorOld = accamulator;
@@ -56,7 +56,7 @@ public class Timer {
             lock.writeLock().lock();
             if (startValue == 0 && accamulator == 0) {
                 resetValues();
-                throw new TimeException("start should be call before");
+                throw new TimeException("startProcedure should be call before");
             }
             long timerStartValueOld = startValue;
             startValue = 0;
@@ -71,7 +71,7 @@ public class Timer {
         try {
             lock.writeLock().lock();
             if (startValue == 0 && accamulator == 0) {
-                throw new TimeException("start should be call before");
+                throw new TimeException("startProcedure should be call before");
             }
             if (startValue != 0 && accamulator == 0) {
                 throw new TimeException("pause should be call before");

@@ -1,15 +1,22 @@
 package com.igumnov.common;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 public class Task {
-    public static Thread start(InstructionsInterface instructions) {
-        Thread thread = new InstructionsThread(instructions);
+
+    public static ProcedureThread startProcedure(ProcedureInterface instructions) {
+        ProcedureThread thread = new ProcedureThread(instructions);
         thread.start();
         return thread;
     }
 
-    public static Thread startWithTimeOut(InstructionsInterface instructions) {
 
-
-        return null;
+    public static Future<Object> startFunction(FunctionInterface function) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Object> future = executor.submit(new TaskCallable(function));
+        return future;
     }
 }
