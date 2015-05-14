@@ -23,6 +23,12 @@ Usage:
     Time.sleepInSeconds(1.5);
     System.out.println("Sleep time: " + Benchmark.timerStop() + "ms");
 
+    int rndInt = Number.randomIntByRange(-10, 300);
+    long rndLong = Number.randomLongByRange(-5L, -2L);
+    double rndDouble = Number.randomDoubleByRange(100.5, 2222.343);
+
+    String fileContent = File.readAllToStringByFileName("dir/somefile.txt");
+
     Benchmark.timerStartByName("loop1");
     for(int i = 0; i<10000 ; ++i) {
         // do something
@@ -51,11 +57,6 @@ Usage:
     //do something
     System.out.println("Object Timer time: " + timer.stop() + "ms");
 
-    int rndInt = Number.randomIntByRange(-10, 300);
-    long rndLong = Number.randomLongByRange(-5L, -2L);
-    double rndDouble = Number.randomDoubleByRange(100.5, 2222.343);
-
-    String fileContent = File.readAllToStringByFileName("dir/somefile.txt");
 
 
 Maven:
