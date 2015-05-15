@@ -34,7 +34,7 @@ Usage:
         // Long time procedure code there
     });
     // Do something
-    if(task.isDone() == false) {
+    if(!task.isDone()) {
        task.join(); // Wait for done
     }
 
