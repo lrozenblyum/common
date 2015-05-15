@@ -82,5 +82,5 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>0.0.8</version>
+      <version>0.1</version>
     </dependency>
