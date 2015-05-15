@@ -3,6 +3,7 @@ package com.igumnov.common;
 
 import static org.junit.Assert.*;
 
+import com.igumnov.common.time.TimeException;
 import org.junit.Test;
 
 public class TimeTest {

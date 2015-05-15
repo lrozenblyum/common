@@ -1,4 +1,4 @@
-package com.igumnov.common;
+package com.igumnov.common.task;
 
 import java.util.concurrent.Callable;
 
@@ -6,7 +6,7 @@ public class TaskCallable implements Callable<Object> {
 
     private FunctionInterface function = null;
     private ProcedureInterface instructions = null;
-    TaskCallable(FunctionInterface f) {
+    public TaskCallable(FunctionInterface f) {
         this.function = f;
     }
     TaskCallable(ProcedureInterface i) {

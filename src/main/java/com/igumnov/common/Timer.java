@@ -1,5 +1,7 @@
 package com.igumnov.common;
 
+import com.igumnov.common.time.TimeException;
+
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Timer {

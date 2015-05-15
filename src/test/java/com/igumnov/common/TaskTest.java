@@ -2,6 +2,8 @@ package com.igumnov.common;
 
 import static org.junit.Assert.*;
 
+import com.igumnov.common.task.ProcedureThread;
+import com.igumnov.common.time.TimeException;
 import org.junit.Test;
 
 import java.util.concurrent.ExecutionException;

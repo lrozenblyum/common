@@ -1,14 +1,11 @@
-package com.igumnov.common;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+package com.igumnov.common.task;
 
 public class ProcedureThread extends Thread {
 
     private ProcedureInterface instructions;
     private boolean done = false;
 
-    ProcedureThread(ProcedureInterface i) {
+    public ProcedureThread(ProcedureInterface i) {
         this.instructions = i;
     }
 
