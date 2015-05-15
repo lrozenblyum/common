@@ -2,11 +2,11 @@ package com.igumnov.common;
 
 import com.igumnov.common.time.TimeException;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Timer {
 
-    //TODO change to nanoseconds
     private long startValue = 0;
     private long accamulator = 0;
     private long repeatCount = 0;
@@ -19,7 +19,7 @@ public class Timer {
                 resetValues();
                 throw new TimeException("stop should be call before");
             }
-            startValue = System.currentTimeMillis();
+            startValue = System.nanoTime();
             repeatCount++;
         } finally {
             lock.writeLock().unlock();
@@ -36,7 +36,7 @@ public class Timer {
             long timerStartValueOld = startValue;
             long timerAccamulatorOld = accamulator;
             resetValues();
-            return System.currentTimeMillis() - timerStartValueOld + timerAccamulatorOld;
+            return TimeUnit.MILLISECONDS.convert(System.nanoTime() - timerStartValueOld + timerAccamulatorOld, TimeUnit.NANOSECONDS);
         } finally {
             lock.writeLock().unlock();
         }
@@ -62,8 +62,8 @@ public class Timer {
             }
             long timerStartValueOld = startValue;
             startValue = 0;
-            accamulator += System.currentTimeMillis() - timerStartValueOld;
-            return accamulator;
+            accamulator += System.nanoTime() - timerStartValueOld;
+            return TimeUnit.MILLISECONDS.convert(accamulator, TimeUnit.NANOSECONDS);
         } finally {
             lock.writeLock().unlock();
         }
@@ -78,7 +78,7 @@ public class Timer {
             if (startValue != 0 && accamulator == 0) {
                 throw new TimeException("pause should be call before");
             }
-            startValue = System.currentTimeMillis();
+            startValue = System.nanoTime();
             repeatCount++;
         } finally {
             lock.writeLock().unlock();
@@ -96,7 +96,7 @@ public class Timer {
     public long getTotlaTime() {
         try {
             lock.readLock().lock();
-            return accamulator;
+            return TimeUnit.MILLISECONDS.convert(accamulator, TimeUnit.NANOSECONDS);
         } finally {
             lock.readLock().unlock();
         }
@@ -105,7 +105,7 @@ public class Timer {
     public long getAverageTime() {
         try {
             lock.readLock().lock();
-            return accamulator / repeatCount;
+            return TimeUnit.MILLISECONDS.convert(accamulator / repeatCount, TimeUnit.NANOSECONDS);
         } finally {
             lock.readLock().unlock();
         }
