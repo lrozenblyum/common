@@ -28,9 +28,10 @@ Usage:
     long rndLong = Number.randomLongByRange(-5L, -2L);
     double rndDouble = Number.randomDoubleByRange(100.5, 2222.343);
 
-    File.writeStringByFileName("Some text", "dir/somefile.txt");
-    String fileContent = File.readAllToStringByFileName("dir/somefile.txt");
-    File.deleteDirectoryWithContentByDirName("tmp/someDirForDeletion");
+    File.writeString("Some text", "dir/somefile.txt");
+    String fileContent = File.readAllToString("dir/somefile.txt");
+    Folder.deleteWithContent"tmp/someDirForDeletion");
+    Folder.copyWithContent("/src.dir","/target.dir");
 
     ProcedureThread task = Task.startProcedure(() -> {
         // Long time procedure code there
@@ -82,5 +83,5 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
