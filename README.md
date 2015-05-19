@@ -78,11 +78,36 @@ Usage:
     System.out.println("Object Timer time: " + timer.stop() + "ms");
 
 
+Declaration instance
+
+    @Named("nameInstance")
+    public class SomeClass {
+        ...
+    }
+
+
+Dependency injection in field
+
+    public class OtherClass {
+
+        @Inject("nameInstance")
+        private SomeClass someClass;
+
+        ...
+
+    }
+
+Dependency injection pragmatically
+
+    OtherClass otherClassInstance = new OtherClass();
+    Dependency.inject(otherClassInstance);
+
+
 
 Maven:
 
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>0.4</version>
+      <version>1.0</version>
     </dependency>
