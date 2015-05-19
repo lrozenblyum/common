@@ -100,7 +100,7 @@ Dependency injection in field
 
 Get instance from context
 
-    SomeClass objInstance = (SomeClass) Dependency.getInstanceOf("newInstance");
+    SomeClass objInstance = (SomeClass) Dependency.findInstance("newInstance");
 
 Initialization of the Dependency Injection Framework
 
@@ -111,6 +111,9 @@ Initialization of the Dependency Injection Framework
     OtherClass otherClassInstance = new OtherClass();
     Dependency.inject(otherClassInstance);
 
+    // put instance to context
+    Dependency.createInstance("otherInstanse", SomeClass.class);
+
 
 
 Maven:
@@ -118,5 +121,5 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>1.1</version>
+      <version>1.2</version>
     </dependency>

@@ -14,6 +14,8 @@ import java.net.URI;
 public class Reflection {
 
 
+    // TODO Add unit test
+    // TODO Refactor String result to Class
     public static ArrayList<String> getClassNamesFromPackage(String packageName) throws IOException, URISyntaxException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL packageURL;

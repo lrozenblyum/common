@@ -80,8 +80,13 @@ public class Dependency {
             lock.readLock().unlock();
         }
     }
-    public static Object getInstanceOf(String name) throws DependencyException {
+    public static Object findInstance(String name) throws DependencyException {
         return get(name);
     }
+
+    public static Object createInstance(String name, Class className) throws DependencyException {
+        return add(className, name);
+    }
+
 
 }
