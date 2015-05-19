@@ -33,12 +33,13 @@ Usage:
     Folder.deleteWithContent"tmp/someDirForDeletion");
     Folder.copyWithContent("/src.dir","/target.dir");
 
-    ProcedureThread task = Task.startProcedure(() -> {
+    Task.setThreadPoolSize(2); // Default value: 10
+    Future<?> task = Task.startProcedure(() -> {
         // Long time procedure code there
     });
     // Do something
     if(!task.isDone()) {
-       task.join(); // Wait for done
+       task.get(); // Wait for done
     }
 
     Future<Object> taskResult = Task.startFunction(() -> {
@@ -83,5 +84,5 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>0.2</version>
+      <version>0.3</version>
     </dependency>

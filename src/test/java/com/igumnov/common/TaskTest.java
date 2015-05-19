@@ -2,7 +2,6 @@ package com.igumnov.common;
 
 import static org.junit.Assert.*;
 
-import com.igumnov.common.task.ProcedureThread;
 import com.igumnov.common.time.TimeException;
 import org.junit.Test;
 
@@ -17,11 +16,11 @@ public class TaskTest {
 
         Benchmark.timerBeginByName("TaskStart");
         Benchmark.timerBeginByName("TaskProgress");
-        ProcedureThread task = Task.startProcedure(() -> {
+        Future<?> task = Task.startProcedure(() -> {
             Time.sleepInSeconds(2);
         });
         assertTrue(Benchmark.timerStopByName("TaskStart") < 0.5 * 1000);
-        task.join();
+        task.get();
         assertTrue(Benchmark.timerStopByName("TaskProgress") > 1 * 1000);
 
     }
