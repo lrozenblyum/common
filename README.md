@@ -33,7 +33,6 @@ Usage:
     Folder.deleteWithContent"tmp/someDirForDeletion");
     Folder.copyWithContent("/src.dir","/target.dir");
 
-    Task.setThreadPoolSize(2); // Default value: 10
     Future<?> task = Task.startProcedure(() -> {
         // Long time procedure code there
     });
@@ -42,6 +41,7 @@ Usage:
        task.get(); // Wait for done
     }
 
+    Task.setThreadPoolSize(2); // Default value: 10
     Future<Object> taskResult = Task.startFunction(() -> {
         // Long time function code there
         return resultObject;
@@ -49,28 +49,28 @@ Usage:
     // Do something
     Object result = taskResult.get();
 
-    Benchmark.timerStartByName("loop1");
+    Benchmark.timerStart("loop1");
     for(int i = 0; i<10000 ; ++i) {
         // do something
     }
-    System.out.println("loop1 time: " + Benchmark.timerStopByName("loop1") + "ms");
+    System.out.println("loop1 time: " + Benchmark.timerStop("loop1") + "ms");
 
-    Benchmark.timerStartByName("pausedTimer");
+    Benchmark.timerStart("pausedTimer");
     // do something
-    Benchmark.timerPauseByName("pausedTimer");
+    Benchmark.timerPause("pausedTimer");
     // do something
-    Benchmark.timerResumeByName("pausedTimer");
+    Benchmark.timerResume("pausedTimer");
     // do something
-    System.out.println("pausedTimer time: " + Benchmark.timerStopByName("pausedTimer") + "ms");
+    System.out.println("pausedTimer time: " + Benchmark.timerStop("pausedTimer") + "ms");
 
     for(int i = 0; i<10000 ; ++i) {
-        Benchmark.timerBeginByName("loop2");
+        Benchmark.timerBegin("loop2");
         // do something
-        Benchmark.timerEndByName("loop2");
+        Benchmark.timerEnd("loop2");
     }
-    System.out.println("loop2 total time: " + Benchmark.timerGetTotalTimeByName("loop2") + "ms");
-    System.out.println("loop2 repeat count: " + Benchmark.timerGetRepeatCountByName("loop2"));
-    System.out.println("loop2 average time: " + Benchmark.timerGetAverageTimeByName("loop2") + "ms");
+    System.out.println("loop2 total time: " + Benchmark.timerGetTotalTime("loop2") + "ms");
+    System.out.println("loop2 repeat count: " + Benchmark.timerGetRepeatCount("loop2"));
+    System.out.println("loop2 average time: " + Benchmark.timerGetAverageTime("loop2") + "ms");
 
     Timer = new Timer();
     timer.start();
@@ -84,5 +84,5 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>0.3</version>
+      <version>0.4</version>
     </dependency>

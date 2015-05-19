@@ -14,29 +14,29 @@ public class TaskTest {
     @Test
     public void testStartProcedure() throws InterruptedException, ExecutionException, TimeException {
 
-        Benchmark.timerBeginByName("TaskStart");
-        Benchmark.timerBeginByName("TaskProgress");
+        Benchmark.timerBegin("TaskStart");
+        Benchmark.timerBegin("TaskProgress");
         Future<?> task = Task.startProcedure(() -> {
             Time.sleepInSeconds(2);
         });
-        assertTrue(Benchmark.timerStopByName("TaskStart") < 0.5 * 1000);
+        assertTrue(Benchmark.timerStop("TaskStart") < 0.5 * 1000);
         task.get();
-        assertTrue(Benchmark.timerStopByName("TaskProgress") > 1 * 1000);
+        assertTrue(Benchmark.timerStop("TaskProgress") > 1 * 1000);
 
     }
 
     @Test
     public void testStartFunction() throws InterruptedException, ExecutionException, TimeException {
-        Benchmark.timerBeginByName("TaskStart2");
-        Benchmark.timerBeginByName("TaskProgress2");
+        Benchmark.timerBegin("TaskStart2");
+        Benchmark.timerBegin("TaskProgress2");
         Future<Object> ret = Task.startFunction(() -> {
             Time.sleepInSeconds(2);
             return "123";
         });
 
-        assertTrue(Benchmark.timerStopByName("TaskStart2") < 0.5 * 1000);
+        assertTrue(Benchmark.timerStop("TaskStart2") < 0.5 * 1000);
         assertEquals("123", ret.get());
-        assertTrue(Benchmark.timerStopByName("TaskProgress2") > 1 * 1000);
+        assertTrue(Benchmark.timerStop("TaskProgress2") > 1 * 1000);
 
     }
 

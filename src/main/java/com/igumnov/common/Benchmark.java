@@ -12,7 +12,7 @@ public class Benchmark {
     private static HashMap<String, Timer> timers = new HashMap<String, Timer>();
     protected static final String timerDefaultName = "com.igumnov.common.timer";
 
-    public static void timerStartByName(String name) throws TimeException {
+    public static void timerStart(String name) throws TimeException {
 
         Timer timer;
         try {
@@ -35,7 +35,7 @@ public class Benchmark {
 
     }
 
-    public static long timerPauseByName(String name) throws TimeException {
+    public static long timerPause(String name) throws TimeException {
         Timer timer;
         try {
             timersLock.readLock().lock();
@@ -52,7 +52,7 @@ public class Benchmark {
         }
     }
 
-    public static void timerResumeByName(String name) throws TimeException {
+    public static void timerResume(String name) throws TimeException {
         Timer timer;
         try {
             timersLock.readLock().lock();
@@ -71,7 +71,7 @@ public class Benchmark {
 
     }
 
-    public static long timerStopByName(String name) throws TimeException {
+    public static long timerStop(String name) throws TimeException {
         Timer timer;
         try {
             timersLock.writeLock().lock();
@@ -93,24 +93,24 @@ public class Benchmark {
     }
 
     public static void timerStart() throws TimeException {
-        timerStartByName(Benchmark.timerDefaultName);
+        timerStart(Benchmark.timerDefaultName);
     }
 
     public static long timerStop() throws TimeException {
-        return timerStopByName(Benchmark.timerDefaultName);
+        return timerStop(Benchmark.timerDefaultName);
     }
 
 
     public static long timerPause() throws TimeException {
-        return timerPauseByName(Benchmark.timerDefaultName);
+        return timerPause(Benchmark.timerDefaultName);
     }
 
     public static void timerResume() throws TimeException {
-        timerResumeByName(Benchmark.timerDefaultName);
+        timerResume(Benchmark.timerDefaultName);
     }
 
 
-    public static void timerBeginByName(String name) throws TimeException {
+    public static void timerBegin(String name) throws TimeException {
         Timer timer;
         try {
             timersLock.writeLock().lock();
@@ -130,11 +130,11 @@ public class Benchmark {
 
     }
 
-    public static long timerEndByName(String name) throws TimeException {
-        return timerPauseByName(name);
+    public static long timerEnd(String name) throws TimeException {
+        return timerPause(name);
     }
 
-    public static long timerGetRepeatCountByName(String name) throws TimeException {
+    public static long timerGetRepeatCount(String name) throws TimeException {
 
         Timer timer;
         try {
@@ -153,7 +153,7 @@ public class Benchmark {
         }
     }
 
-    public static long timerGetAverageTimeByName(String name) throws TimeException {
+    public static long timerGetAverageTime(String name) throws TimeException {
         Timer timer;
         try {
             timersLock.readLock().lock();
@@ -171,7 +171,7 @@ public class Benchmark {
         }
     }
 
-    public static long timerGetTotalTimeByName(String name) throws TimeException {
+    public static long timerGetTotalTime(String name) throws TimeException {
         Timer timer;
         try {
             timersLock.readLock().lock();

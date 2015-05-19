@@ -1,7 +1,7 @@
 package com.igumnov.common;
 
 
-public class Time extends Benchmark {
+public class Time {
 
 
     public static void delayInSeconds(double seconds) {
