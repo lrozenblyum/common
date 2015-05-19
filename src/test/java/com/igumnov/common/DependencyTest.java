@@ -24,6 +24,7 @@ public class DependencyTest {
         DependencyTest obj = new DependencyTest();
         Dependency.inject(obj);
         assertEquals(obj.testInject(), "1");
+        assertEquals(((InjectClass)Dependency.getInstanceOf("inject")).ret(), "1");
 
     }
 

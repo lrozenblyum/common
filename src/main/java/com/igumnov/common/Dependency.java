@@ -80,5 +80,8 @@ public class Dependency {
             lock.readLock().unlock();
         }
     }
+    public static Object getInstanceOf(String name) throws DependencyException {
+        return get(name);
+    }
 
 }

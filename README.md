@@ -98,6 +98,10 @@ Dependency injection in field
 
     }
 
+Get instance from context
+
+    SomeClass objInstance = (SomeClass) Dependency.getInstanceOf("newInstance");
+
 Initialization of the Dependency Injection Framework
 
     // scans classes of the specified package recursively for Annotations:
@@ -114,5 +118,5 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>1.0</version>
+      <version>1.1</version>
     </dependency>
