@@ -97,8 +97,12 @@ Dependency injection in field
 
     }
 
-Dependency injection pragmatically
+Initialization of the Dependency Injection Framework
 
+    // scans classes of the specified package recursively for Annotations:
+    Dependency.scan("com.yourpackage.app");
+
+    // performing the injection of dependencies of a class (transitively):
     OtherClass otherClassInstance = new OtherClass();
     Dependency.inject(otherClassInstance);
 
