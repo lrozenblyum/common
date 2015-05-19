@@ -22,10 +22,14 @@ public class WebServerTest {
 
     @Test
     public void testWebServer() throws IOException {
-        WebServer.start("localhost", 8080, "tmp", 10);
+        WebServer.start("localhost", 8080, "tmp");
         WebServer.scan("com.igumnov.common");
         File.writeString("123", "tmp/webserver.txt");
         assertEquals("123", URL.getAllToString("http://localhost:8080/webserver.txt"));
+        WebServer.addHandler("/script", () -> {
+            return "Bla-Bla";
+        });
+        assertEquals("Bla-Bla", URL.getAllToString("http://localhost:8080/script"));
         WebServer.stop();
     }
 }

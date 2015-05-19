@@ -15,6 +15,9 @@ Common Java library:
 * Random range generator
 * File operations
 * Tasks/Threads
+* Reflection
+* WebServer
+* Dependency Injection Framework
 
 
 Usage:
@@ -79,6 +82,18 @@ Usage:
     System.out.println("Object Timer time: " + timer.stop() + "ms");
 
 
+Embedded WebServer
+
+    WebServer.start("localhost", 8080, "/path_to_static_content");
+    WebServer.addHandler("/script", () -> {
+        return "Bla-Bla script result";
+    });
+    WebServer.stop();
+
+
+
+Dependency Injection Framework
+
 Declaration instance
 
     @Named("nameInstance")
@@ -121,5 +136,5 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>1.2</version>
+      <version>2.0</version>
     </dependency>
