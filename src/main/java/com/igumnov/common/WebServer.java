@@ -1,16 +1,19 @@
 package com.igumnov.common;
 
 
-import com.igumnov.common.webserver.FileHandler;
-import com.igumnov.common.webserver.StringHandler;
+import com.igumnov.common.webserver.*;
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import com.igumnov.common.webserver.StringInterface;
 
 public class WebServer {
 
+    public static final String METHOD_GET = "GET";
+    public static final String METHOD_POST = "POST";
+    public static final String METHOD_PUT = "PUT";
+    public static final String METHOD_DELETE = "DELETE";
     private static  HttpServer server;
     private WebServer() {
 
@@ -34,5 +37,11 @@ public class WebServer {
 
     public static void addHandler(String name, StringInterface i) {
         server.createContext(name, new StringHandler(i));
+    }
+
+    public static void addRestController(String name, RestControllerInterface i) {
+        HttpContext context = server.createContext(name, new RestControllerHandler(i));
+        context.getFilters().add(new ParameterFilter());
+
     }
 }
