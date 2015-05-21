@@ -5,10 +5,10 @@ Why?
 A lot of questions on Stack Overflow have answer on 3-5 lines code. This library collect
 typical cases which developers copy-past in their projects. All functions in this library covered
 by JUnit test. Simply use this small library to have clean and more stable code in your project.
-This library could work like Dependency Injection Framework the same and contain Embedded WebServer.
+This library could work like Dependency Injection Framework and/or Embedded WebServer with MVC Framework.
 
 
-Common Java library:
+Common Java library functions:
 
 * Sleep/Delay/Pause
 * Timer for Benchmark
@@ -17,9 +17,16 @@ Common Java library:
 * Tasks/Threads
 * Reflection
 * JSON
-* WebServer (Static/CGI/Rest support)
+* WebServer (Static Content/CGI/Rest support)
+* MVC Framework with Template Engine
 * Dependency Injection Framework
 * URL
+
+Dependencies from other projects:
+* Jetty - WebServer
+* Jackson - JSON parser
+* Thymeleaf - HTML template engine
+* NekoHTML - HTML parser
 
 Usage:
 
@@ -77,12 +84,7 @@ Usage:
     System.out.println("loop2 repeat count: " + Benchmark.timerGetRepeatCount("loop2"));
     System.out.println("loop2 average time: " + Benchmark.timerGetAverageTime("loop2") + "ms");
 
-    Timer = new Timer();
-    timer.start();
-    //do something
-    System.out.println("Object Timer time: " + timer.stop() + "ms");
-
-    SomePOJO obj = (SomePOJO)JSON.parse( jsonString, SomePOJO.class));
+    SomePOJO obj = (SomePOJO) JSON.parse(jsonString, SomePOJO.class));
     String json = JSON.toString(obj);
 
     String responseBody = URL.getAllToString("http://localhost:8181/script");
@@ -119,7 +121,19 @@ Embedded WebServer
     });
 
 
+
+
+    WebServer.addTemplates("/path_to_templates");
+    WebServer.addController("/", (request, model) -> {
+        model.put("varName", new Integer("123"));
+        return "home";
+    });
+
     WebServer.start();
+
+home.html in "/path_to_templates" folder
+
+    <html><body><span th:text="${varName}"></span></body><html>
 
 Dependency Injection Framework
 
@@ -165,5 +179,5 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>2.1</version>
+      <version>2.2</version>
     </dependency>

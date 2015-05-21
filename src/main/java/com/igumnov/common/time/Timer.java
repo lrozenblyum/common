@@ -1,4 +1,4 @@
-package com.igumnov.common;
+package com.igumnov.common.time;
 
 import com.igumnov.common.time.TimeException;
 

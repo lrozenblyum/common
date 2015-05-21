@@ -7,11 +7,18 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
 public class WebServer {
+
+//    final static Logger logger = Logger.getLogger(WebServer.class);
+
+    private static TemplateEngine templateEngine;
+
 
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
@@ -21,6 +28,7 @@ public class WebServer {
 
     private static  Server server;
     private static ArrayList<Handler> handlers = new ArrayList<Handler>();
+    private static String templateFolder;
 
     private WebServer() {
 
@@ -41,9 +49,12 @@ public class WebServer {
         contexts.setHandlers(list);
         server.setHandler(contexts);
         server.start();
+
+//        logger.info("WebServer started");
     }
     public static void stop() throws Exception {
         server.stop();
+//        logger.info("WebServer stoped");
     }
 
     public static void addHandler(String name, StringInterface i) {
@@ -81,5 +92,27 @@ public class WebServer {
         rh.setResourceBase(folder);
         context.setHandler(rh);
         handlers.add(context);
+    }
+
+    public static void addTemplates(String folder) {
+        templateFolder = folder;
+        ServletContextTemplateResolver templateResolver =
+                new ServletContextTemplateResolver();
+        templateResolver.setTemplateMode("LEGACYHTML5");
+        templateResolver.setPrefix("/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setCacheTTLMs(3600000L);
+        templateEngine = new TemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver);
+
+    }
+
+    public static void addController(String name, ControllerInterface i) {
+        ContextHandler context = new ContextHandler();
+        context.setResourceBase(templateFolder);
+        context.setContextPath(name);
+        context.setHandler(new ControllerHandler(templateEngine,i));
+        handlers.add(context);
+
     }
 }

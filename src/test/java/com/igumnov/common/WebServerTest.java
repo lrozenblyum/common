@@ -1,15 +1,16 @@
 package com.igumnov.common;
 
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import com.igumnov.common.webserver.WebServerException;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 public class WebServerTest {
+
 
     @Before
     public void before() {
@@ -24,6 +25,8 @@ public class WebServerTest {
 
     @Test
     public void testWebServer() throws Exception {
+
+
         WebServer.init("localhost", 8181);
 
 
@@ -57,6 +60,12 @@ public class WebServerTest {
 
         });
 
+        WebServer.addTemplates("tmp");
+        File.writeString("<html><body><span th:text=\"${varName}\"></span></body><html>", "tmp/example.html");
+        WebServer.addController("/index", (request, model) -> {
+            model.put("varName", new Integer("123"));
+            return "example";
+        });
 
         WebServer.start();
         assertEquals("123", URL.getAllToString("http://localhost:8181/webserver.txt"));
@@ -66,6 +75,8 @@ public class WebServerTest {
         o.setName("a");
         o.setSalary(1);
         assertEquals(JSON.toString(o), URL.getAllToString("http://localhost:8181/put", WebServer.METHOD_PUT, null, JSON.toString(o)));
+
+        assertEquals("<html><head></head><body><span>123</span></body></html>",URL.getAllToString("http://localhost:8181/index"));
 
         WebServer.stop();
     }
