@@ -7,7 +7,7 @@
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Common Java library</description>
+    <description>Common Java library - Simple, small, stable and fast with Dependency Injection Framework and WebServer</description>
     <url>https://github.com/evgenyigumnov/common</url>
 
     <scm>
