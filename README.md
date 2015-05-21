@@ -31,19 +31,36 @@ Dependencies from other projects:
 Usage:
 
     import com.igumnov.common.*;
-    
+
+Maven:
+
+    <dependency>
+      <groupId>com.igumnov</groupId>
+      <artifactId>common</artifactId>
+      <version>2.2</version>
+    </dependency>
+
+
+Sleep
+
     Benchmark.timerStart();
     Time.sleepInSeconds(1.5);
     System.out.println("Sleep time: " + Benchmark.timerStop() + "ms");
+
+Random generator
 
     int rndInt = Number.randomIntByRange(-10, 300);
     long rndLong = Number.randomLongByRange(-5L, -2L);
     double rndDouble = Number.randomDoubleByRange(100.5, 2222.343);
 
+File/Folder
+
     File.writeString("Some text", "dir/somefile.txt");
     String fileContent = File.readAllToString("dir/somefile.txt");
     Folder.deleteWithContent"tmp/someDirForDeletion");
     Folder.copyWithContent("/src.dir","/target.dir");
+
+Tasks
 
     Future<?> task = Task.startProcedure(() -> {
         // Long time procedure code there
@@ -60,6 +77,8 @@ Usage:
     });
     // Do something
     Object result = taskResult.get();
+
+Benchmark
 
     Benchmark.timerStart("loop1");
     for(int i = 0; i<10000 ; ++i) {
@@ -84,10 +103,16 @@ Usage:
     System.out.println("loop2 repeat count: " + Benchmark.timerGetRepeatCount("loop2"));
     System.out.println("loop2 average time: " + Benchmark.timerGetAverageTime("loop2") + "ms");
 
+JSON
+
     SomePOJO obj = (SomePOJO) JSON.parse(jsonString, SomePOJO.class));
     String json = JSON.toString(obj);
 
+URL
+
     String responseBody = URL.getAllToString("http://localhost:8181/script");
+
+Reflection
 
     ArrayList<String> names = Reflection.getClassNamesFromPackage("com.your_package_name");
 
@@ -99,6 +124,8 @@ Embedded WebServer
         return "Bla-Bla script result";
     });
 
+
+Rest controller
 
     WebServer.addRestController("/rest/get", (request) -> {
         if (request.getMethod().equals(WebServer.METHOD_GET)) {
@@ -122,6 +149,7 @@ Embedded WebServer
 
 
 
+ModelViewController with TemplateEngine
 
     WebServer.addTemplates("/path_to_templates");
     WebServer.addController("/", (request, model) -> {
@@ -129,11 +157,16 @@ Embedded WebServer
         return "home";
     });
 
-    WebServer.start();
 
-home.html in "/path_to_templates" folder
+    home.html in "/path_to_templates" folder
 
     <html><body><span th:text="${varName}"></span></body><html>
+
+WebServer start/stop
+
+    WebServer.start();
+    WebServer.stop();
+
 
 Dependency Injection Framework
 
@@ -174,10 +207,3 @@ Initialization of the Dependency Injection Framework
 
 
 
-Maven:
-
-    <dependency>
-      <groupId>com.igumnov</groupId>
-      <artifactId>common</artifactId>
-      <version>2.2</version>
-    </dependency>
