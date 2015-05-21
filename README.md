@@ -5,7 +5,7 @@ Why?
 A lot of questions on Stack Overflow have answer on 3-5 lines code. This library collect
 typical cases which developers copy-past in their projects. All functions in this library covered
 by JUnit test. Simply use this small library to have clean and more stable code in your project.
-This library could work like Dependency Injection Framework the same. Library size:  ~20Kb
+This library could work like Dependency Injection Framework the same.
 
 
 Common Java library:
@@ -16,9 +16,10 @@ Common Java library:
 * File operations
 * Tasks/Threads
 * Reflection
-* WebServer
+* JSON
+* WebServer (Static/CGI/Rest support)
 * Dependency Injection Framework
-
+* URL
 
 Usage:
 
@@ -81,16 +82,44 @@ Usage:
     //do something
     System.out.println("Object Timer time: " + timer.stop() + "ms");
 
+    SomePOJO obj = (SomePOJO)JSON.parse( jsonString, SomePOJO.class));
+    String json = JSON.toString(obj);
+
+    String responseBody = URL.getAllToString("http://localhost:8181/script");
+
+    ArrayList<String> names = Reflection.getClassNamesFromPackage("com.your_package_name");
 
 Embedded WebServer
 
-    WebServer.start("localhost", 8080, "/path_to_static_content");
-    WebServer.addHandler("/script", () -> {
+    WebServer.init("localhost", 8181);
+    WebServer.addStaticContentHandler("/static", "/path_to_static_content");
+    WebServer.addHandler("/script", (request) -> {
         return "Bla-Bla script result";
     });
-    WebServer.stop();
 
 
+    WebServer.addRestController("/rest/get", (request) -> {
+        if (request.getMethod().equals(WebServer.METHOD_GET)) {
+                ObjectDTO objectDTO = new ObjectDTO();
+                objectDTO.setVal(1);
+                ...
+                return objectDTO;
+        }
+        throw new WebServerException("Unsupported method");
+    });
+
+
+    WebServer.addRestController("/rest/put", ObjectDTO.class, (request, putObjectDTO) -> {
+        if (request.getMethod().equals(WebServer.METHOD_PUT)) {
+                putObjectDTO.getAttr();
+                ...
+                return putObjectDTO;
+        }
+        throw new WebServerException("Unsupported method");
+    });
+
+
+    WebServer.start();
 
 Dependency Injection Framework
 
@@ -136,5 +165,5 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>2.0</version>
+      <version>2.1</version>
     </dependency>

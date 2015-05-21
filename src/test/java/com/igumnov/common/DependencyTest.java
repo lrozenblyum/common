@@ -2,6 +2,7 @@ package com.igumnov.common;
 
 
 import com.igumnov.common.dependency.DependencyException;
+import com.igumnov.common.dependency.Inject;
 import org.junit.Test;
 
 import java.io.IOException;

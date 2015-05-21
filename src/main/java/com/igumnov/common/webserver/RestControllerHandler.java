@@ -1,42 +1,78 @@
 package com.igumnov.common.webserver;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import com.igumnov.common.JSON;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Map;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 
-public class RestControllerHandler implements HttpHandler {
+public class RestControllerHandler extends AbstractHandler {
 
     private RestControllerInterface restController;
+    private RestControllerSimpleInterface restControllerSimple;
+    private Class postBody;
 
-    public RestControllerHandler(RestControllerInterface i) {
-        restController = i;
+    public RestControllerHandler(RestControllerSimpleInterface i) {
+        restControllerSimple = i;
     }
-    @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
-        Map<String, Object> params =
-                (Map<String, Object>)httpExchange.getAttribute("parameters");
+    public RestControllerHandler(RestControllerInterface i,Class pb) {
+        restController = i;
+        postBody = pb;
+    }
 
-        String method = httpExchange.getRequestMethod();
+    @Override
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+
+
+        Object postObject = null;
         Object responseObj = null;
-        try {
-            responseObj =  restController.response(method,params);
-        } catch (WebServerException e) {
-            responseObj = e;
+        int status = HttpServletResponse.SC_OK;
+        if(request.getMethod().equals("POST") || request.getMethod().equals("PUT") ) {
+            StringBuffer jb = new StringBuffer();
+            String line = null;
+            try {
+                BufferedReader reader = request.getReader();
+                while ((line = reader.readLine()) != null)
+                    jb.append(line);
+            } catch (Exception e) {
+                responseObj = e;
+                status = HttpServletResponse.SC_BAD_REQUEST;
+            }
+            postObject = JSON.parse(jb.toString(), postBody);
         }
 
-        ObjectMapper mapper = new ObjectMapper();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        mapper.writeValue(baos, responseObj);
-        String response = new String(baos.toByteArray());
-        httpExchange.sendResponseHeaders(200, response.length());
-        OutputStream os = httpExchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
+        try {
+            if(restController != null)
+            {
+                responseObj =  restController.response(request, postObject);
+            }
+            else {
+                responseObj =  restControllerSimple.response(request);
+
+            }
+        } catch (WebServerException e) {
+            responseObj = e;
+            status = HttpServletResponse.SC_BAD_REQUEST;
+
+        }
+
+
+
+        String ret = JSON.toString(responseObj);
+
+        response.setContentType("application/json; charset=utf-8");
+        response.setStatus(status);
+
+        PrintWriter out = response.getWriter();
+
+        out.write(ret);
+
+        baseRequest.setHandled(true);
+
 
     }
 }

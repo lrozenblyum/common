@@ -1,8 +1,8 @@
 package com.igumnov.common.webserver;
 
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 
 public interface RestControllerInterface {
-    public Object response(String method, Map<String, Object> params) throws WebServerException;
 
+    public Object response(HttpServletRequest request, Object postObject) throws WebServerException;
 }

@@ -1,4 +1,4 @@
-package com.igumnov.common;
+package com.igumnov.common.dependency;
 
 
 import java.lang.annotation.Retention;

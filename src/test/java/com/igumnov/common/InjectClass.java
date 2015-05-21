@@ -1,5 +1,8 @@
 package com.igumnov.common;
 
+import com.igumnov.common.dependency.Inject;
+import com.igumnov.common.dependency.Named;
+
 @Named("inject")
 public class InjectClass {
 

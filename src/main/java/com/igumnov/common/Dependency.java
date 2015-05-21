@@ -1,6 +1,8 @@
 package com.igumnov.common;
 
 import com.igumnov.common.dependency.DependencyException;
+import com.igumnov.common.dependency.Inject;
+import com.igumnov.common.dependency.Named;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;

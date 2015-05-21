@@ -23,26 +23,50 @@ public class WebServerTest {
     }
 
     @Test
-    public void testWebServer() throws IOException {
-        WebServer.start("localhost", 8181, "tmp");
-        WebServer.scan("com.igumnov.common");
+    public void testWebServer() throws Exception {
+        WebServer.init("localhost", 8181);
+
+
+        WebServer.addStaticContentHandler("/", "tmp");
         File.writeString("123", "tmp/webserver.txt");
-        assertEquals("123", URL.getAllToString("http://localhost:8181/webserver.txt"));
-        WebServer.addHandler("/script", () -> {
+
+        WebServer.addHandler("/script", (request) -> {
             return "Bla-Bla";
         });
 
-        WebServer.addRestController("/get", (method, params) -> {
-            if (method.equals(WebServer.METHOD_GET)) {
+        WebServer.addRestController("/get", (request) -> {
+
+            if (request.getMethod().equals(WebServer.METHOD_GET)) {
                 HashMap<String, String> ret = new HashMap<String, String>();
                 ret.put("key1", "val1");
                 ret.put("key2", "val2");
                 return ret;
             }
             throw new WebServerException("Unsupported method");
+
+
         });
+
+        WebServer.addRestController("/put", ObjectDTO.class, (request, postObject) -> {
+
+            if (request.getMethod().equals(WebServer.METHOD_PUT)) {
+                return postObject;
+            }
+            throw new WebServerException("Unsupported method");
+
+
+        });
+
+
+        WebServer.start();
+        assertEquals("123", URL.getAllToString("http://localhost:8181/webserver.txt"));
         assertEquals("Bla-Bla", URL.getAllToString("http://localhost:8181/script"));
         assertEquals("{\"key1\":\"val1\",\"key2\":\"val2\"}", URL.getAllToString("http://localhost:8181/get"));
+        ObjectDTO o = new ObjectDTO();
+        o.setName("a");
+        o.setSalary(1);
+        assertEquals(JSON.toString(o), URL.getAllToString("http://localhost:8181/put", WebServer.METHOD_PUT, null, JSON.toString(o)));
+
         WebServer.stop();
     }
 }

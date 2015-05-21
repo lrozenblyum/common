@@ -1,25 +1,41 @@
 package com.igumnov.common.webserver;
 
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 
-public class StringHandler  implements HttpHandler {
+public class StringHandler extends AbstractHandler {
 
     StringInterface stringInterface;
     public StringHandler(StringInterface i) {
         stringInterface = i;
     }
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        String response = stringInterface.response();
-        exchange.sendResponseHeaders(200, response.length());
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
 
+    @Override
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+        int status = HttpServletResponse.SC_OK;
+        String ret = null;
+        try {
+            ret = stringInterface.response(request);
+        } catch (WebServerException e) {
+            ret = e.getMessage();
+            status = HttpServletResponse.SC_BAD_REQUEST;
+        }
+
+        response.setContentType("text/html; charset=utf-8");
+        response.setStatus(status);
+
+        PrintWriter out = response.getWriter();
+
+        out.write(ret);
+
+        baseRequest.setHandled(true);
     }
 }
