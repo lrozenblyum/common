@@ -5,7 +5,7 @@ Why?
 A lot of questions on Stack Overflow have answer on 3-5 lines code. This library collect
 typical cases which developers copy-past in their projects. All functions in this library covered
 by JUnit test. Simply use this small library to have clean and more stable code in your project.
-This library could work like Dependency Injection Framework the same.
+This library could work like Dependency Injection Framework the same and contain Embedded WebServer.
 
 
 Common Java library:
