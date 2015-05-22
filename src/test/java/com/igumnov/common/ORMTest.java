@@ -24,7 +24,7 @@ public class ORMTest {
         }
     }
 
-    //@Ignore
+    @Ignore
     @Test
     public void testORM() throws IOException, SQLException {
         new java.io.File("tmp/sql_folder").mkdir();
