@@ -1,9 +1,12 @@
 package com.igumnov.common;
 
 
+import com.igumnov.common.orm.Id;
+
 public class ObjectDTO {
 
-
+    @Id
+    private Long id;
     private String name;
     private Integer salary;
 
@@ -23,4 +26,11 @@ public class ObjectDTO {
         this.salary = salary;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

@@ -25,4 +25,10 @@ public class File {
         }
     }
 
+    public static void appendLine(String line, String filename) throws IOException {
+        try(PrintWriter output = new PrintWriter(new FileWriter(filename,true)))
+        {
+            output.printf("%s\r\n", line);
+        }
+    }
 }
