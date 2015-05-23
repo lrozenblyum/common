@@ -2,6 +2,7 @@ package com.igumnov.common;
 
 
 import com.igumnov.common.orm.Transaction;
+import com.igumnov.common.reflection.ReflectionException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class ORMTest {
     }
 
     @Test
-    public void testORM() throws IOException, SQLException, IllegalAccessException {
+    public void testORM() throws IOException, SQLException, IllegalAccessException, ReflectionException {
         new java.io.File("tmp/sql_folder").mkdir();
 
         ORM.connectionPool("org.h2.Driver", "jdbc:h2:mem:test", "SA", "", 10, 30);
@@ -43,10 +44,9 @@ public class ORMTest {
         obj.setName("aaa");
         obj.setSalary(111);
         obj = (ObjectDTO) tx.insert(obj);
-        //System.out.println(obj.getId());
- //       obj.setName("ccc");
- //       obj.setSalary(333);
- //       obj = (ObjectDTO)tx.update(obj);
+        obj.setName("ccc");
+        obj.setSalary(333);
+        obj = (ObjectDTO)tx.update(obj);
         tx.commit(); // Or tx.rollback();
 
 

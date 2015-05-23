@@ -2,6 +2,7 @@ package com.igumnov.common;
 
 
 import com.igumnov.common.orm.Id;
+import com.igumnov.common.reflection.ReflectionException;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -67,13 +68,28 @@ public class Reflection {
         return names;
     }
 
-    public static void setField(Object object, String fieldName, Object value) throws IllegalAccessException {
+    public static void setField(Object object, String fieldName, Object value) throws IllegalAccessException, ReflectionException {
+        boolean noField = true;
         for (Field field : object.getClass().getDeclaredFields()) {
             if (field.getName().equals(fieldName)) {
                 field.setAccessible(true);
                 field.set(object, value);
+                noField = false;
+            }
+        }
+        if (noField) {
+            throw new ReflectionException("No field");
+        }
+    }
+
+    public static Object getFieldValue(Object object, String fieldName) throws IllegalAccessException, ReflectionException {
+        for (Field field : object.getClass().getDeclaredFields()) {
+            if (field.getName().equals(fieldName)) {
+                field.setAccessible(true);
+                return field.get(object);
 
             }
         }
+        throw new ReflectionException("No field");
     }
 }
