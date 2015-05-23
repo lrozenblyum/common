@@ -1,14 +1,12 @@
 package com.igumnov.common;
 
 import com.igumnov.common.orm.Transaction;
+import com.igumnov.common.reflection.ReflectionException;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class ORM {
@@ -26,6 +24,29 @@ public class ORM {
     }
 
     public static void applyDDL(String sqlFolder, String ddlTableName) throws java.sql.SQLException, IOException {
+        Connection con = null;
+        try {
+            con = ds.getConnection();
+            DatabaseMetaData dbm = con.getMetaData();
+            ResultSet tables = dbm.getTables(null, null, ddlTableName, null);
+            if (tables.next()) {
+
+
+            } else {
+
+
+
+            }
+
+            tables.close();
+
+        } finally {
+            try {
+                if (con != null) con.close();
+            } catch (Exception e) {
+            }
+
+        }
 
         try {
             for (int i = 1; true; i++) {
@@ -60,27 +81,108 @@ public class ORM {
 
     }
 
-    public static Object insert(Object obj) {
-        return null;
-    }
-
-    public static Object update(Object obj) {
-        return null;
-    }
-
-    public static ArrayList<Object> findBy(String where, Class objectClass) {
-        return null;
-    }
-
-    public static Object findOne(Long aLong, Class objectClass) {
-        return null;
-    }
-
     public static Transaction beginTransaction() throws SQLException {
         return new Transaction(ds.getConnection());
     }
 
-    public static ArrayList<Object> select(String query, Class objectClass) {
-        return null;
+
+
+    public Object update(Object obj) throws IllegalAccessException, SQLException {
+        Transaction tx = null;
+        try {
+            tx = ORM.beginTransaction();
+            return tx.update(obj);
+
+        } finally {
+            if (tx != null) {
+                tx.commit();
+            }
+        }
+
     }
+
+
+    public Object insert(Object obj) throws IllegalAccessException, SQLException, ReflectionException {
+        Transaction tx = null;
+        try {
+            tx = ORM.beginTransaction();
+            return tx.insert(obj);
+
+        } finally {
+            if (tx != null) {
+                tx.commit();
+            }
+        }
+
+    }
+
+    public ArrayList<Object> findBy(String where, Class classObject, Object... params) throws SQLException, IllegalAccessException, InstantiationException, ReflectionException {
+        Transaction tx = null;
+        try {
+            tx = ORM.beginTransaction();
+            return tx.findBy(where,classObject,params);
+
+        } finally {
+            if (tx != null) {
+                tx.commit();
+            }
+        }
+    }
+
+    public Object findOne(Class className, Object primaryKey) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException {
+        Transaction tx = null;
+        try {
+            tx = ORM.beginTransaction();
+            return tx.findOne(className,primaryKey);
+
+        } finally {
+            if (tx != null) {
+                tx.commit();
+            }
+        }
+    }
+
+    public int deleteBy(String where, Class classObject, Object... params) throws SQLException {
+        Transaction tx = null;
+        try {
+            tx = ORM.beginTransaction();
+            return tx.deleteBy(where,classObject,params);
+
+        } finally {
+            if (tx != null) {
+                tx.commit();
+            }
+        }
+    }
+
+    public int delete(Object obj) throws IllegalAccessException, SQLException {
+        Transaction tx = null;
+        try {
+            tx = ORM.beginTransaction();
+            return delete(obj);
+
+        } finally {
+            if (tx != null) {
+                tx.commit();
+            }
+        }
+    }
+
+    public ArrayList<Object> findAll(Class classObject) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException {
+
+        Transaction tx = null;
+        try {
+            tx = ORM.beginTransaction();
+            return tx.findAll(classObject);
+
+        } finally {
+            if (tx != null) {
+                tx.commit();
+            }
+        }
+
+    }
+
+
+
 }

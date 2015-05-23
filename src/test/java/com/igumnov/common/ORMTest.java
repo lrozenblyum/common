@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import static org.junit.Assert.assertEquals;
+
 
 public class ORMTest {
 
@@ -26,70 +28,107 @@ public class ORMTest {
     }
 
     @Test
-    public void testORM() throws IOException, SQLException, IllegalAccessException, ReflectionException {
+    public void testORM() throws IOException, SQLException, IllegalAccessException, ReflectionException, InstantiationException {
         new java.io.File("tmp/sql_folder").mkdir();
 
         ORM.connectionPool("org.h2.Driver", "jdbc:h2:mem:test", "SA", "", 10, 30);
 
-        File.appendLine("CREATE TABLE objectdto (id BIGINT AUTO_INCREMENT PRIMARY KEY)", "tmp/sql_folder/1.sql");
-        File.appendLine("ALTER TABLE objectdto ADD name VARCHAR(255)", "tmp/sql_folder/1.sql");
-        File.appendLine("ALTER TABLE objectdto ADD SALARY INT", "tmp/sql_folder/2.sql");
+        File.appendLine("CREATE TABLE ObjectDTO (id BIGINT AUTO_INCREMENT PRIMARY KEY)", "tmp/sql_folder/1.sql");
+        File.appendLine("ALTER TABLE ObjectDTO ADD name VARCHAR(255)", "tmp/sql_folder/1.sql");
+        File.appendLine("ALTER TABLE ObjectDTO ADD SALARY INT", "tmp/sql_folder/2.sql");
 
         ORM.applyDDL("tmp/sql_folder", "ddl_history_table_name");
 
 
         //Transaction mode
-        Transaction tx = ORM.beginTransaction();
-        ObjectDTO obj = new ObjectDTO();
-        obj.setName("aaa");
-        obj.setSalary(111);
-        obj = (ObjectDTO) tx.insert(obj);
-        obj.setName("ccc");
-        obj.setSalary(333);
-        obj = (ObjectDTO)tx.update(obj);
-        tx.commit(); // Or tx.rollback();
+        Transaction tx = null;
+        try {
+            tx = ORM.beginTransaction();
+            ObjectDTO obj = new ObjectDTO();
+            obj.setName("aaa");
+            obj.setSalary(111);
+            obj = (ObjectDTO) tx.insert(obj);
+            ObjectDTO object1 = (ObjectDTO) tx.findOne(ObjectDTO.class, new Long(1));
+            assertEquals(object1.getName(), "aaa");
+            obj.setName("ccc");
+            obj.setSalary(333);
+            obj = (ObjectDTO) tx.update(obj);
+            ObjectDTO object2 = (ObjectDTO) tx.findOne(ObjectDTO.class, new Long(1));
+            assertEquals(object2.getName(), "ccc");
+        } finally {
+            if (tx != null) {
+                tx.commit(); 
+            }
+        }
 
 
-        // Autocommit mode
-        obj.setName("bbb");
-        obj.setSalary(222);
-        obj = (ObjectDTO) ORM.update(obj);
-        ArrayList<Object> objectsFind = ORM.findBy("id > 0", ObjectDTO.class);
-        ArrayList<Object> objectsSelect = ORM.select("select id, name, salary from objectdto where id > 0", ObjectDTO.class);
-        ObjectDTO one =  (ObjectDTO) ORM.findOne(new Long(1), ObjectDTO.class);
+        try {
+            tx = ORM.beginTransaction();
+            ArrayList<Object> objectsFind = tx.findBy("id > ?", ObjectDTO.class, new Long(0));
+            assertEquals(objectsFind.size(), 1);
+            int affectedRecords = tx.deleteBy("id > ?", ObjectDTO.class, new Long(0));
+            assertEquals(affectedRecords,1);
+            ArrayList<Object> objectsFind2 = tx.findBy("id > ?", ObjectDTO.class, new Long(0));
+            assertEquals(objectsFind2.size(), 0);
+
+        } finally {
+            if (tx != null) {
+                tx.commit(); 
+            }
+        }
+
+
+        try {
+            tx = ORM.beginTransaction();
+            ObjectDTO o = new ObjectDTO();
+            o.setName("2");
+            o.setSalary(0);
+            o = (ObjectDTO) tx.insert(o);
+            ArrayList<Object> objectsFind = tx.findAll(ObjectDTO.class);
+            assertEquals(objectsFind.size(), 1);
+            int affectedRecords = tx.delete(o);
+            assertEquals(affectedRecords,1);
+            ArrayList<Object> objectsFind2 = tx.findBy("id > ?", ObjectDTO.class, new Long(0));
+            assertEquals(objectsFind2.size(), 0);
+
+        } finally {
+            if (tx != null) {
+                tx.commit(); 
+            }
+        }
+
+
+        try {
+            tx = ORM.beginTransaction();
+            ObjectDTO o = new ObjectDTO();
+            o.setName("2");
+            o.setSalary(0);
+            o = (ObjectDTO) tx.insert(o);
+            ArrayList<Object> objectsFind = tx.findAll(ObjectDTO.class);
+            assertEquals(objectsFind.size(), 1);
+
+
+        } finally {
+            if (tx != null) {
+                tx.rollback();
+            }
+        }
+
+        try {
+            tx = ORM.beginTransaction();
+            ArrayList<Object> objectsFind = tx.findAll(ObjectDTO.class);
+            assertEquals(objectsFind.size(), 0);
+
+
+        } finally {
+            if (tx != null) {
+                tx.commit();
+            }
+        }
+
+
 
     }
 
-/*
-    ORM.connectionPool("org.h2.Driver", "jdbc:h2:~/test", "user", "password", 10, 30);
-
-    // File "sql_folder/1.sql"
-    //    create table objectdto (id Long Primary Key, name varchar(255));
-
-    // File "sql_folder/2.sql"
-    //    alter table objectdto add columns (salary INT);
-
-
-    ORM.applyDDL("sql_folder", "ddl_history_table_name");
-
-    // Autocommit mode
-    ObjectDTO obj = new ObjectDTO();
-    obj.setName("aaa");
-    obj.setSalary(111);
-    obj = ORM.insert(obj);
-    obj.setName("bbb");
-    obj.setSalary(222);
-    obj = ORM.update(obj);
-    ArrayList<ObjectDTO> objectsFind = (ArrayList<ObjectDTO>) ORM.findBy("id > 0", ObjectDTO.class);
-    ArrayList<ObjectDTO> objectsSelect =  (ArrayList<ObjectDTO>) ORM.select("select id, name, salary from objectdto where id > 0", ObjectDTO.class);
-    ObjectDTO one =  ORM.findOne(new Long(1), ObjectDTO.class);
-
-    //Transaction mode
-    Transaction tx = ORM.beginTransaction();
-    obj.setName("ccc");
-    obj.setSalary(333);
-    obj = tx.update(obj);
-    tx.commit(); // Or tx.rollback();
-*/
 
 }
