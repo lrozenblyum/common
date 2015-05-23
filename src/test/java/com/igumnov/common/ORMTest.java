@@ -24,23 +24,33 @@ public class ORMTest {
         }
     }
 
-    @Ignore
     @Test
-    public void testORM() throws IOException, SQLException {
+    public void testORM() throws IOException, SQLException, IllegalAccessException {
         new java.io.File("tmp/sql_folder").mkdir();
 
         ORM.connectionPool("org.h2.Driver", "jdbc:h2:mem:test", "SA", "", 10, 30);
 
-        File.appendLine("CREATE TABLE objectdto (id BIGINT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))", "tmp/sql_folder/1.sql");
+        File.appendLine("CREATE TABLE objectdto (id BIGINT AUTO_INCREMENT PRIMARY KEY)", "tmp/sql_folder/1.sql");
+        File.appendLine("ALTER TABLE objectdto ADD name VARCHAR(255)", "tmp/sql_folder/1.sql");
         File.appendLine("ALTER TABLE objectdto ADD SALARY INT", "tmp/sql_folder/2.sql");
 
         ORM.applyDDL("tmp/sql_folder", "ddl_history_table_name");
 
-        // Autocommit mode
+
+        //Transaction mode
+        Transaction tx = ORM.beginTransaction();
         ObjectDTO obj = new ObjectDTO();
         obj.setName("aaa");
         obj.setSalary(111);
-        obj = (ObjectDTO) ORM.insert(obj);
+        obj = (ObjectDTO) tx.insert(obj);
+        //System.out.println(obj.getId());
+ //       obj.setName("ccc");
+ //       obj.setSalary(333);
+ //       obj = (ObjectDTO)tx.update(obj);
+        tx.commit(); // Or tx.rollback();
+
+
+        // Autocommit mode
         obj.setName("bbb");
         obj.setSalary(222);
         obj = (ObjectDTO) ORM.update(obj);
@@ -48,12 +58,6 @@ public class ORMTest {
         ArrayList<Object> objectsSelect = ORM.select("select id, name, salary from objectdto where id > 0", ObjectDTO.class);
         ObjectDTO one =  (ObjectDTO) ORM.findOne(new Long(1), ObjectDTO.class);
 
-        //Transaction mode
-        Transaction tx = ORM.beginTransaction();
-        obj.setName("ccc");
-        obj.setSalary(333);
-        obj = (ObjectDTO)tx.update(obj);
-        tx.commit(); // Or tx.rollback();
     }
 
 /*

@@ -5,7 +5,7 @@ import com.igumnov.common.orm.Id;
 
 public class ObjectDTO {
 
-    @Id
+    @Id(autoIncremental=false)
     private Long id;
     private String name;
     private Integer salary;

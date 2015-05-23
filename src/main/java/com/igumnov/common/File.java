@@ -3,6 +3,7 @@ package com.igumnov.common;
 import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.stream.Stream;
 
 public class File {
     public static String readAllToString(String fileName) throws IOException {
@@ -30,5 +31,9 @@ public class File {
         {
             output.printf("%s\r\n", line);
         }
+    }
+
+    public static Stream<String> readLines(String fileName) throws IOException {
+        return Files.lines(Paths.get(fileName));
     }
 }

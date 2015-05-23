@@ -1,7 +1,11 @@
 package com.igumnov.common;
 
 
+import com.igumnov.common.orm.Id;
+
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -15,7 +19,6 @@ public class Reflection {
 
 
     // TODO Add unit test
-    // TODO Refactor String result to Class
     public static ArrayList<String> getClassNamesFromPackage(String packageName) throws IOException, URISyntaxException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL packageURL;
@@ -33,7 +36,7 @@ public class Reflection {
 
             jarFileName = URLDecoder.decode(packageURL.getFile(), "UTF-8");
             jarFileName = jarFileName.substring(5, jarFileName.indexOf("!"));
-            System.out.println(">" + jarFileName);
+            //System.out.println(">" + jarFileName);
             jf = new JarFile(jarFileName);
             jarEntries = jf.entries();
             while (jarEntries.hasMoreElements()) {
@@ -51,16 +54,26 @@ public class Reflection {
             String entryName;
             for (java.io.File actual : contenuti) {
                 entryName = actual.getName();
-                if(entryName.lastIndexOf('.') != -1) {
+                if (entryName.lastIndexOf('.') != -1) {
                     entryName = entryName.substring(0, entryName.lastIndexOf('.'));
-                    names.add(packageName.replace("/", ".")+ "." +entryName);
+                    names.add(packageName.replace("/", ".") + "." + entryName);
                 } else {
-                  ArrayList<String> ret = getClassNamesFromPackage(packageName.replace("/", ".") + "." + entryName);
-                  names.addAll(ret);
+                    ArrayList<String> ret = getClassNamesFromPackage(packageName.replace("/", ".") + "." + entryName);
+                    names.addAll(ret);
                 }
 
             }
         }
         return names;
+    }
+
+    public static void setField(Object object, String fieldName, Object value) throws IllegalAccessException {
+        for (Field field : object.getClass().getDeclaredFields()) {
+            if (field.getName().equals(fieldName)) {
+                field.setAccessible(true);
+                field.set(object, value);
+
+            }
+        }
     }
 }

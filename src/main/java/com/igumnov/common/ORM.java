@@ -4,8 +4,10 @@ import com.igumnov.common.orm.Transaction;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -24,21 +26,37 @@ public class ORM {
     }
 
     public static void applyDDL(String sqlFolder, String ddlTableName) throws java.sql.SQLException, IOException {
-        Connection c = null;
-        Statement stmt = null;
-        Statement stmt2 = null;
-        try {
-            c = ds.getConnection();
-            stmt = c.createStatement();
-            stmt.execute(File.readAllToString(sqlFolder + "/1.sql"));
-            stmt2 = c.createStatement();
-            stmt2.execute(File.readAllToString(sqlFolder + "/2.sql"));
-        } finally {
-            try { if (stmt != null) stmt.close(); } catch(Exception e) { }
-            try { if (stmt2 != null) stmt.close(); } catch(Exception e) { }
-            try { if (c != null) c.close(); } catch(Exception e) { }
-        }
 
+        try {
+            for (int i = 1; true; i++) {
+                final Connection c = ds.getConnection();
+                c.setAutoCommit(false);
+                File.readLines(sqlFolder + "/" + i + ".sql").forEach((line) -> {
+                    Statement stmt = null;
+                    try {
+                        stmt = c.createStatement();
+                        stmt.execute(line);
+
+                    } catch (SQLException e) {
+                        // TODO Add log warning
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            if (stmt != null) stmt.close();
+                        } catch (Exception e) {
+                        }
+                    }
+                });
+                c.commit();
+                c.setAutoCommit(true);
+                try {
+                    if (c != null) c.close();
+                } catch (Exception e) {
+                }
+            }
+        } catch (NoSuchFileException e) {
+            //It is last sql file
+        }
 
     }
 
@@ -58,8 +76,8 @@ public class ORM {
         return null;
     }
 
-    public static Transaction beginTransaction() {
-        return null;
+    public static Transaction beginTransaction() throws SQLException {
+        return new Transaction(ds.getConnection());
     }
 
     public static ArrayList<Object> select(String query, Class objectClass) {
