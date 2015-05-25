@@ -49,6 +49,8 @@ public class WebServer {
     private static ServerConnector connector;
     private static ServerConnector https;
     private static  ConstraintSecurityHandler securityHandler;
+    private static ServletContextHandler servletContext;
+
     private WebServer() {
 
     }
@@ -101,18 +103,12 @@ public class WebServer {
 
         ContextHandler lastHandler=null;
 
-        HashSessionIdManager hashSessionIdManager = new HashSessionIdManager();
-        SessionHandler sessionHandler = new SessionHandler();
-        SessionManager sessionManager = new HashSessionManager();
-        sessionManager.setSessionIdManager(hashSessionIdManager);
-        sessionHandler.setSessionManager(sessionManager);
-        sessionHandler.setHandler(securityHandler);
-        sessionHandler.setServer(server);
-        server.setSessionIdManager(hashSessionIdManager);
+
         for(ContextHandler h: handlers) {
             if(lastHandler == null) {
                 if( securityHandler != null) {
-                    sessionHandler.setHandler(h);
+//                    securityHandler.setHandler(h);
+
                 }
                 lastHandler = h;
             } else  {
@@ -120,7 +116,8 @@ public class WebServer {
             }
         }
 
-        server.setHandler(sessionHandler);
+        lastHandler.setHandler(servletContext);
+        server.setHandler(lastHandler);
 
         server.start();
     }
@@ -210,7 +207,6 @@ public class WebServer {
         securityHandler.setAuthenticator(authenticator);
 
 
-        ServletContextHandler servletContext;
         servletContext = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS | ServletContextHandler.SECURITY);
         servletContext.setSecurityHandler(securityHandler);
         //handlers.add((Handler)securityHandler);
