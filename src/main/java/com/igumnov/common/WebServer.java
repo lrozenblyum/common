@@ -2,20 +2,19 @@ package com.igumnov.common;
 
 
 import com.igumnov.common.webserver.*;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
 public class WebServer {
 
-//    final static Logger logger = Logger.getLogger(WebServer.class);
 
     private static TemplateEngine templateEngine;
 
@@ -29,7 +28,8 @@ public class WebServer {
     private static  Server server;
     private static ArrayList<Handler> handlers = new ArrayList<Handler>();
     private static String templateFolder;
-
+    private static ServerConnector connector;
+    private static ServerConnector https;
     private WebServer() {
 
     }
@@ -37,24 +37,54 @@ public class WebServer {
 
     public static void init(String hostName, int port) {
 
-        server = new Server(InetSocketAddress.createUnresolved(hostName,port));
+        server = new Server();
+
+        connector=new ServerConnector(server);
+        connector.setHost(hostName);
+        connector.setPort(port);
+
+
+
+
 
     }
 
+    public static void https(int port, String keystoreFile, String storePassword, String managerPassword) {
+        HttpConfiguration http_config = new HttpConfiguration();
+        http_config.setSecureScheme("https");
+        http_config.setSecurePort(port);
+
+        SslContextFactory sslContextFactory = new SslContextFactory();
+        sslContextFactory.setKeyStorePath(keystoreFile);
+        sslContextFactory.setKeyStorePassword(storePassword);
+        sslContextFactory.setKeyManagerPassword(managerPassword);
+
+        HttpConfiguration https_config = new HttpConfiguration(http_config);
+        https_config.addCustomizer(new SecureRequestCustomizer());
+
+        https = new ServerConnector(server,
+                new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()),
+                new HttpConnectionFactory(https_config));
+        https.setPort(port);
+    }
 
     public static void start() throws Exception {
+        if(https == null) {
+            server.setConnectors(new Connector[]{connector});
+        } else {
+            server.setConnectors(new Connector[]{connector,https});
+        }
+
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         Handler list[] = new Handler[handlers.size()];
         list = handlers.toArray(list);
         contexts.setHandlers(list);
         server.setHandler(contexts);
-        server.start();
 
-//        logger.info("WebServer started");
+        server.start();
     }
     public static void stop() throws Exception {
         server.stop();
-//        logger.info("WebServer stoped");
     }
 
     public static void addHandler(String name, StringInterface i) {

@@ -28,7 +28,7 @@ public class WebServerTest {
 
 
         WebServer.init("localhost", 8181);
-
+        WebServer.https(8282, "src/test/resources/key.jks", "storepwd", "keypwd");
 
         WebServer.addStaticContentHandler("/", "tmp");
         File.writeString("123", "tmp/webserver.txt");
@@ -76,8 +76,7 @@ public class WebServerTest {
         o.setSalary(1);
         assertEquals(JSON.toString(o), URL.getAllToString("http://localhost:8181/put", WebServer.METHOD_PUT, null, JSON.toString(o)));
 
-        assertEquals("<html><head></head><body><span>123</span></body></html>",URL.getAllToString("http://localhost:8181/index"));
-
+        assertEquals("<html><head></head><body><span>123</span></body></html>", URL.getAllToString("http://localhost:8181/index"));
         WebServer.stop();
     }
 }
