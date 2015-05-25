@@ -21,6 +21,7 @@ Common Java library functions:
 * MVC Framework with Template Engine
 * Dependency Injection Framework
 * URL
+* ORM Framework
 
 Dependencies from other projects:
 * Jetty - WebServer
@@ -198,7 +199,7 @@ Rest controller
 
 
 
-ModelViewController with TemplateEngine
+ModelViewController with TemplateEngine Framework
 
     WebServer.addTemplates("/path_to_templates");
     WebServer.addController("/", (request, model) -> {
@@ -258,17 +259,17 @@ Initialization of the Dependency Injection Framework
     Dependency.createInstance("otherInstanse", SomeClass.class);
 
 
-ORM
+ORM Framework
 
 
     ORM.connectionPool("DriverClassName", "databaseUrl", "name", "password", minPoolSize, maxPoolSize);
 
     File.appendLine("CREATE TABLE ObjectDTO (id BIGINT AUTO_INCREMENT PRIMARY KEY)", "tmp/sql_folder/1.sql");
     File.appendLine("ALTER TABLE ObjectDTO ADD name VARCHAR(255)", "tmp/sql_folder/1.sql");
-    ORM.applyDDL("tmp/sql_folder");
+    ORM.applyDDL("tmp/sql_folder"); // In table DDLHISTORY store information about already applied .sql files
 
     File.appendLine("ALTER TABLE ObjectDTO ADD salary INT", "tmp/sql_folder/2.sql");
-    ORM.applyDDL("tmp/sql_folder");
+    ORM.applyDDL("tmp/sql_folder"); // In table DDLHISTORY store information about already applied .sql files
 
     public class ObjectDTO {
         @Id(autoIncremental=true)
@@ -278,7 +279,8 @@ ORM
         ....
     }
 
-    //Autocommit mode
+Autocommit mode
+
     ObjectDTO obj = new ObjectDTO();
     obj.setName("a");
     obj.setSalary(1);
@@ -289,7 +291,8 @@ ORM
     obj = (ObjectDTO) ORM.update(obj);
     ORM.delete(obj);
 
-    //Transactional mode
+Transactional mode
+
     Transaction tx=null;
     try {
         tx = ORM.beginTransaction();
@@ -308,11 +311,13 @@ ORM
         }
     }
 
-    // Get connection from pool if you need send SQL directly
+Get connection from pool if you need send SQL directly
+
     DataSource ds = (DataSource) Dependency.find("dataSource");
-    Connection c;
+    Connection c=null;
     try {
         c = ds.getConnection();
+        ...
     } finally {
          try {
             if (con != null) con.close();
