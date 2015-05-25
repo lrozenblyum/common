@@ -3,6 +3,7 @@ package com.igumnov.common;
 import com.igumnov.common.dependency.DependencyException;
 import com.igumnov.common.dependency.Inject;
 import com.igumnov.common.dependency.Named;
+import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -36,7 +37,6 @@ public class Dependency {
         }
     }
 
-
     public static void inject(Object obj) throws IllegalAccessException, DependencyException {
 
         for (Field field : obj.getClass().getDeclaredFields()) {
@@ -51,7 +51,20 @@ public class Dependency {
 
     }
 
+    public static Object find(String name) throws DependencyException {
+        return get(name);
+    }
 
+    public static Object createInstance(String name, Class className) throws DependencyException, IllegalAccessException, InstantiationException {
+        Object obj = className.newInstance();
+        inject(obj);
+        return add(obj, name);
+    }
+
+
+    public static void bind(String name, Object object) throws DependencyException {
+        add(object, name);
+    }
 
     private static Object add(Object injectionObject, String name) throws DependencyException {
         injectionObject.toString();
@@ -82,13 +95,5 @@ public class Dependency {
             lock.readLock().unlock();
         }
     }
-    public static Object findInstance(String name) throws DependencyException {
-        return get(name);
-    }
-
-    public static Object createInstance(String name, Class className) throws DependencyException {
-        return add(className, name);
-    }
-
 
 }

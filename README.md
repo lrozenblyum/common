@@ -5,7 +5,7 @@ Why?
 A lot of questions on Stack Overflow have answer on 3-5 lines code. This library collect
 typical cases which developers copy-past in their projects. All functions in this library covered
 by JUnit test. Simply use this small library to have clean and more stable code in your project.
-This library could work like Dependency Injection Framework and/or Embedded WebServer with MVC Framework.
+This library could work like Small Enterprise Server with Dependency Injection, Embedded WebServer, ORM Frameworks.
 
 
 Common Java library functions:
@@ -37,10 +37,10 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>2.2</version>
+      <version>3.0</version>
     </dependency>
 
-If you do not want use webserver
+If you do not want use WebServer
 
       <exclusions>
                 <exclusion>
@@ -61,6 +61,24 @@ If you do not want use webserver
                 </exclusion>
       </exclusions>
 
+If you do not want use JSON
+
+      <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+      </exclusions>
+
+If you do not want use ORM
+
+      <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-dbcp2</artifactId>
+                </exclusion>
+      </exclusions>
+
 
 
 Sleep
@@ -78,6 +96,11 @@ Random generator
 File/Folder
 
     File.writeString("Some text", "dir/somefile.txt");
+    File.appendLine("Other line text", "dir/somefile.txt");
+    File.readLines("dir/somefile.txt").forEach((line) -> {
+        System.out.println(line);
+    });
+
     String fileContent = File.readAllToString("dir/somefile.txt");
     Folder.deleteWithContent"tmp/someDirForDeletion");
     Folder.copyWithContent("/src.dir","/target.dir");
@@ -133,10 +156,14 @@ JSON
 URL
 
     String responseBody = URL.getAllToString("http://localhost:8181/script");
+    // Extended version: getAllToString(String url, String method, Map<String, Object> postParams, String postBody)
+
 
 Reflection
 
     ArrayList<String> names = Reflection.getClassNamesFromPackage("com.your_package_name");
+    Reflection.setField(object, "fieldName", value);
+    Object value = Reflection.getFieldValue(object, "fieldName");
 
 Embedded WebServer
 
@@ -213,7 +240,7 @@ Dependency injection in field
 
 Get instance from context
 
-    SomeClass objInstance = (SomeClass) Dependency.findInstance("newInstance");
+    SomeClass objInstance = (SomeClass) Dependency.find("newInstance");
 
 Initialization of the Dependency Injection Framework
 
@@ -224,8 +251,71 @@ Initialization of the Dependency Injection Framework
     OtherClass otherClassInstance = new OtherClass();
     Dependency.inject(otherClassInstance);
 
-    // put instance to context
+    // bind instance by name to context
+    Dependency.bind("instanceName", otherClassInstance);
+
+    // create and put instance to context
     Dependency.createInstance("otherInstanse", SomeClass.class);
 
 
+ORM
+
+
+    ORM.connectionPool("DriverClassName", "databaseUrl", "name", "password", minPoolSize, maxPoolSize);
+
+    File.appendLine("CREATE TABLE ObjectDTO (id BIGINT AUTO_INCREMENT PRIMARY KEY)", "tmp/sql_folder/1.sql");
+    File.appendLine("ALTER TABLE ObjectDTO ADD name VARCHAR(255)", "tmp/sql_folder/1.sql");
+    ORM.applyDDL("tmp/sql_folder");
+
+    File.appendLine("ALTER TABLE ObjectDTO ADD salary INT", "tmp/sql_folder/2.sql");
+    ORM.applyDDL("tmp/sql_folder");
+
+    public class ObjectDTO {
+        @Id(autoIncremental=true)
+        private Long id;
+        private String name;
+        private Integer salary;
+        ....
+    }
+
+    //Autocommit mode
+    ObjectDTO obj = new ObjectDTO();
+    obj.setName("a");
+    obj.setSalary(1);
+    obj = (ObjectDTO) ORM.insert(obj);
+    obj = (ObjectDTO) ORM.findOne(ObjectDTO.class, new Long(1));
+    ArrayList<Object> = ORM.findBy("id > ? and salary = ? order by id limit 1", ObjectDTO.class, new Long(0), new Integer(1))
+    obj.setName("b");
+    obj = (ObjectDTO) ORM.update(obj);
+    ORM.delete(obj);
+
+    //Transactional mode
+    Transaction tx=null;
+    try {
+        tx = ORM.beginTransaction();
+        ObjectDTO obj = new ObjectDTO();
+        obj.setName("a");
+        obj.setSalary(1);
+        obj = (ObjectDTO) tx.insert(obj);
+        obj = (ObjectDTO) tx.findOne(ObjectDTO.class, new Long(1));
+        ArrayList<Object> = tx.findBy("id > ? and salary = ? order by id limit 1", ObjectDTO.class, new Long(0), new Integer(1))
+        obj.setName("b");
+        obj = (ObjectDTO) tx.update(obj);
+        ORM.delete(obj);
+    } finally {
+        if (tx != null) {
+            tx.commit();
+        }
+    }
+
+    // Get connection from pool if you need send SQL directly
+    DataSource ds = (DataSource) Dependency.find("dataSource");
+    Connection c;
+    try {
+        c = ds.getConnection();
+    } finally {
+         try {
+            if (con != null) con.close();
+         } catch (Exception e) {}
+    }
 

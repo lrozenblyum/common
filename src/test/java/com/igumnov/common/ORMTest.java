@@ -1,10 +1,10 @@
 package com.igumnov.common;
 
 
+import com.igumnov.common.dependency.DependencyException;
 import com.igumnov.common.orm.Transaction;
 import com.igumnov.common.reflection.ReflectionException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -28,16 +28,18 @@ public class ORMTest {
     }
 
     @Test
-    public void testORM() throws IOException, SQLException, IllegalAccessException, ReflectionException, InstantiationException {
+    public void testORM() throws IOException, SQLException, IllegalAccessException, ReflectionException, InstantiationException, DependencyException {
         new java.io.File("tmp/sql_folder").mkdir();
 
         ORM.connectionPool("org.h2.Driver", "jdbc:h2:mem:test", "SA", "", 10, 30);
 
         File.appendLine("CREATE TABLE ObjectDTO (id BIGINT AUTO_INCREMENT PRIMARY KEY)", "tmp/sql_folder/1.sql");
         File.appendLine("ALTER TABLE ObjectDTO ADD name VARCHAR(255)", "tmp/sql_folder/1.sql");
-        File.appendLine("ALTER TABLE ObjectDTO ADD SALARY INT", "tmp/sql_folder/2.sql");
+        ORM.applyDDL("tmp/sql_folder");
 
-        ORM.applyDDL("tmp/sql_folder", "ddl_history_table_name");
+        File.appendLine("ALTER TABLE ObjectDTO ADD salary INT", "tmp/sql_folder/2.sql");
+        ORM.applyDDL("tmp/sql_folder");
+
 
 
         //Transaction mode
@@ -126,6 +128,19 @@ public class ORMTest {
             }
         }
 
+        // Autocommit mode
+
+        ObjectDTO test1 = new ObjectDTO();
+        test1.setName("a");
+        test1.setSalary(1);
+        test1 = (ObjectDTO )ORM.insert(test1);
+        ObjectDTO test2 = (ObjectDTO)ORM.findOne(ObjectDTO.class, new Long(test1.getId()));
+        assertEquals(test1.getId(), test2.getId());
+        assertEquals(test2.getName(), "a");
+        test1.setName("b");
+        ORM.update(test1);
+        test2 = (ObjectDTO)ORM.findOne(ObjectDTO.class, new Long(test1.getId()));
+        assertEquals(test2.getName(), "b");
 
 
     }
