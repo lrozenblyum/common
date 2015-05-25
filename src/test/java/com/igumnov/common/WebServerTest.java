@@ -29,12 +29,20 @@ public class WebServerTest {
 
         WebServer.init("localhost", 8181);
         WebServer.https(8282, "src/test/resources/key.jks", "storepwd", "keypwd");
+        WebServer.security("/*", "/login");
 
-        WebServer.addStaticContentHandler("/", "tmp");
+        WebServer.addStaticContentHandler("/tmp", "tmp");
         File.writeString("123", "tmp/webserver.txt");
 
         WebServer.addHandler("/script", (request) -> {
             return "Bla-Bla";
+        });
+
+        WebServer.addHandler("/login", (request) -> {
+            return "<form method='POST' action='/j_security_check'>"
+                    + "<input type='text' name='j_username'/>"
+                    + "<input type='password' name='j_password'/>"
+                    + "<input type='submit' value='Login'/></form>";
         });
 
         WebServer.addRestController("/get", (request) -> {
@@ -68,6 +76,7 @@ public class WebServerTest {
         });
 
         WebServer.start();
+        Time.sleepInSeconds(1111);
         assertEquals("123", URL.getAllToString("http://localhost:8181/webserver.txt"));
         assertEquals("Bla-Bla", URL.getAllToString("http://localhost:8181/script"));
         assertEquals("{\"key1\":\"val1\",\"key2\":\"val2\"}", URL.getAllToString("http://localhost:8181/get"));

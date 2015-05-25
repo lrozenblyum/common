@@ -3,14 +3,32 @@ package com.igumnov.common;
 
 import com.igumnov.common.webserver.*;
 import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.security.ConstraintMapping;
+import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.HashLoginService;
+import org.eclipse.jetty.security.authentication.FormAuthenticator;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.server.session.HashSessionIdManager;
+import org.eclipse.jetty.server.session.HashSessionManager;
+import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import org.eclipse.jetty.util.security.Password;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class WebServer {
@@ -26,10 +44,11 @@ public class WebServer {
 
 
     private static  Server server;
-    private static ArrayList<Handler> handlers = new ArrayList<Handler>();
+    private static ArrayList<ContextHandler> handlers = new ArrayList<ContextHandler>();
     private static String templateFolder;
     private static ServerConnector connector;
     private static ServerConnector https;
+    private static  ConstraintSecurityHandler securityHandler;
     private WebServer() {
 
     }
@@ -75,11 +94,33 @@ public class WebServer {
             server.setConnectors(new Connector[]{connector,https});
         }
 
-        ContextHandlerCollection contexts = new ContextHandlerCollection();
-        Handler list[] = new Handler[handlers.size()];
-        list = handlers.toArray(list);
-        contexts.setHandlers(list);
-        server.setHandler(contexts);
+//        ContextHandlerCollection contexts = new ContextHandlerCollection();
+//        Handler list[] = new Handler[handlers.size()];
+//        list = handlers.toArray(list);
+//        contexts.setHandlers(list);
+
+        ContextHandler lastHandler=null;
+
+        HashSessionIdManager hashSessionIdManager = new HashSessionIdManager();
+        SessionHandler sessionHandler = new SessionHandler();
+        SessionManager sessionManager = new HashSessionManager();
+        sessionManager.setSessionIdManager(hashSessionIdManager);
+        sessionHandler.setSessionManager(sessionManager);
+        sessionHandler.setHandler(securityHandler);
+        sessionHandler.setServer(server);
+        server.setSessionIdManager(hashSessionIdManager);
+        for(ContextHandler h: handlers) {
+            if(lastHandler == null) {
+                if( securityHandler != null) {
+                    sessionHandler.setHandler(h);
+                }
+                lastHandler = h;
+            } else  {
+                lastHandler.setHandler(h);
+            }
+        }
+
+        server.setHandler(sessionHandler);
 
         server.start();
     }
@@ -116,7 +157,7 @@ public class WebServer {
 
     public static void addStaticContentHandler(String name, String folder) {
         ContextHandler context = new ContextHandler();
-        context.setContextPath("/");
+        context.setContextPath(name);
         ResourceHandler rh = new ResourceHandler();
         rh.setDirectoriesListed(true);
         rh.setResourceBase(folder);
@@ -145,4 +186,34 @@ public class WebServer {
         handlers.add(context);
 
     }
+
+    public static void security(String path, String loginPage) {
+
+
+
+        Constraint constraint = new Constraint();
+        constraint.setName(Constraint.__FORM_AUTH);;
+        constraint.setRoles(new String[]{"user", "admin", "moderator"});
+        constraint.setAuthenticate(true);
+
+        ConstraintMapping constraintMapping = new ConstraintMapping();
+        constraintMapping.setConstraint(constraint);
+        constraintMapping.setPathSpec(path);
+
+        securityHandler = new ConstraintSecurityHandler();
+        securityHandler.addConstraintMapping(constraintMapping);
+        HashLoginService loginService = new HashLoginService();
+        loginService.putUser("username", new Password("password"), new String[]{"user"});
+        securityHandler.setLoginService(loginService);
+
+        FormAuthenticator authenticator = new FormAuthenticator(loginPage, loginPage, false);
+        securityHandler.setAuthenticator(authenticator);
+
+
+        ServletContextHandler servletContext;
+        servletContext = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS | ServletContextHandler.SECURITY);
+        servletContext.setSecurityHandler(securityHandler);
+        //handlers.add((Handler)securityHandler);
+    }
+
 }

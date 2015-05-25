@@ -49,6 +49,14 @@ If you do not want use WebServer
                     <artifactId>jetty-server</artifactId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-security</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-servlet</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.thymeleaf</groupId>
                     <artifactId>thymeleaf</artifactId>
                 </exclusion>
