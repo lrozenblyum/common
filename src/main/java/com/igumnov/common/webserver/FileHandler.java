@@ -1,4 +1,4 @@
-package com.igumnov.common.webserver;
+/*package com.igumnov.common.webserver;
 
 
 import com.igumnov.common.File;
@@ -22,3 +22,4 @@ public class FileHandler implements HttpHandler {
 
     }
 }
+*/

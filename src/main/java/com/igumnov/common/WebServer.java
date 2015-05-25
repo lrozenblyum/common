@@ -95,29 +95,11 @@ public class WebServer {
         } else {
             server.setConnectors(new Connector[]{connector,https});
         }
-
-//        ContextHandlerCollection contexts = new ContextHandlerCollection();
-//        Handler list[] = new Handler[handlers.size()];
-//        list = handlers.toArray(list);
-//        contexts.setHandlers(list);
-
-        ContextHandler lastHandler=null;
-
-
-        for(ContextHandler h: handlers) {
-            if(lastHandler == null) {
-                if( securityHandler != null) {
-//                    securityHandler.setHandler(h);
-
-                }
-                lastHandler = h;
-            } else  {
-                lastHandler.setHandler(h);
-            }
-        }
-
-        lastHandler.setHandler(servletContext);
-        server.setHandler(lastHandler);
+        ContextHandlerCollection contexts = new ContextHandlerCollection();
+        Handler list[] = new Handler[handlers.size()];
+        list = handlers.toArray(list);
+        contexts.setHandlers(list);
+        server.setHandler(contexts);
 
         server.start();
     }
@@ -127,27 +109,21 @@ public class WebServer {
 
     public static void addHandler(String name, StringInterface i) {
 
-        ContextHandler context = new ContextHandler();
-        context.setContextPath(name);
-        context.setHandler(new StringHandler(i));
-        handlers.add(context);
+
+        addServlet(new StringHandler(i), name);
     }
 
     public static void addRestController(String name, Class c, RestControllerInterface i) {
 
-        ContextHandler context = new ContextHandler();
-        context.setContextPath(name);
-        context.setHandler(new RestControllerHandler(i, c));
-        handlers.add(context);
+
+        addServlet(new RestControllerHandler(i, c), name);
 
     }
 
     public static void addRestController(String name, RestControllerSimpleInterface i) {
 
-        ContextHandler context = new ContextHandler();
-        context.setContextPath(name);
-        context.setHandler(new RestControllerHandler(i));
-        handlers.add(context);
+
+        addServlet(new RestControllerHandler(i), name);
 
     }
 
@@ -176,29 +152,41 @@ public class WebServer {
     }
 
     public static void addController(String name, ControllerInterface i) {
-        ContextHandler context = new ContextHandler();
-        context.setResourceBase(templateFolder);
-        context.setContextPath(name);
-        context.setHandler(new ControllerHandler(templateEngine,i));
-        handlers.add(context);
+
+        addServlet(new ControllerHandler(templateEngine, i), name);
 
     }
 
-    public static void security(String path, String loginPage) {
-
-
-
+    public static void restrict(String path, String[] roles) {
         Constraint constraint = new Constraint();
         constraint.setName(Constraint.__FORM_AUTH);;
-        constraint.setRoles(new String[]{"user", "admin", "moderator"});
+        constraint.setRoles(roles);
         constraint.setAuthenticate(true);
 
         ConstraintMapping constraintMapping = new ConstraintMapping();
         constraintMapping.setConstraint(constraint);
         constraintMapping.setPathSpec(path);
 
-        securityHandler = new ConstraintSecurityHandler();
         securityHandler.addConstraintMapping(constraintMapping);
+    }
+
+    public static void allow(String path) {
+        Constraint constraint = new Constraint();
+        constraint.setName(Constraint.__FORM_AUTH);;
+        constraint.setAuthenticate(false);
+
+        ConstraintMapping constraintMapping = new ConstraintMapping();
+        constraintMapping.setConstraint(constraint);
+        constraintMapping.setPathSpec(path);
+
+        securityHandler.addConstraintMapping(constraintMapping);
+    }
+
+    public static void security(String path, String loginPage) {
+
+
+        securityHandler = new ConstraintSecurityHandler();
+
         HashLoginService loginService = new HashLoginService();
         loginService.putUser("username", new Password("password"), new String[]{"user"});
         securityHandler.setLoginService(loginService);
@@ -206,10 +194,20 @@ public class WebServer {
         FormAuthenticator authenticator = new FormAuthenticator(loginPage, loginPage, false);
         securityHandler.setAuthenticator(authenticator);
 
-
-        servletContext = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS | ServletContextHandler.SECURITY);
+        servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS | ServletContextHandler.SECURITY);
         servletContext.setSecurityHandler(securityHandler);
-        //handlers.add((Handler)securityHandler);
+
+        handlers.add(servletContext);
     }
 
+    static private void addServlet(HttpServlet s, String name) {
+        if(servletContext == null) {
+            servletContext = new ServletContextHandler();
+        }
+        if(templateFolder!=null) {
+            servletContext.setResourceBase(templateFolder);
+        }
+        servletContext.addServlet(new ServletHolder(s), name);
+
+    }
 }

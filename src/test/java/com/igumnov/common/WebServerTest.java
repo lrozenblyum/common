@@ -2,6 +2,7 @@ package com.igumnov.common;
 
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.igumnov.common.webserver.WebServerException;
 import org.junit.Before;
@@ -28,15 +29,22 @@ public class WebServerTest {
 
 
         WebServer.init("localhost", 8181);
-        WebServer.https(8282, "src/test/resources/key.jks", "storepwd", "keypwd");
+        //WebServer.https(8282, "src/test/resources/key.jks", "storepwd", "keypwd");
         WebServer.security("/*", "/login");
 
-        WebServer.addStaticContentHandler("/tmp", "tmp");
+        WebServer.addStaticContentHandler("/static", "tmp");
         File.writeString("123", "tmp/webserver.txt");
 
         WebServer.addHandler("/script", (request) -> {
             return "Bla-Bla";
         });
+
+        WebServer.addHandler("/new", (request) -> {
+            return "new new";
+        });
+
+        WebServer.allow("/*");
+        WebServer.restrict("/new", new String[]{"user"});
 
         WebServer.addHandler("/login", (request) -> {
             return "<form method='POST' action='/j_security_check'>"
@@ -76,8 +84,7 @@ public class WebServerTest {
         });
 
         WebServer.start();
-        Time.sleepInSeconds(1111);
-        assertEquals("123", URL.getAllToString("http://localhost:8181/webserver.txt"));
+        assertEquals("123", URL.getAllToString("http://localhost:8181/static/webserver.txt"));
         assertEquals("Bla-Bla", URL.getAllToString("http://localhost:8181/script"));
         assertEquals("{\"key1\":\"val1\",\"key2\":\"val2\"}", URL.getAllToString("http://localhost:8181/get"));
         ObjectDTO o = new ObjectDTO();
@@ -86,6 +93,8 @@ public class WebServerTest {
         assertEquals(JSON.toString(o), URL.getAllToString("http://localhost:8181/put", WebServer.METHOD_PUT, null, JSON.toString(o)));
 
         assertEquals("<html><head></head><body><span>123</span></body></html>", URL.getAllToString("http://localhost:8181/index"));
+        assertNotEquals("new new", URL.getAllToString("http://localhost:8181/new"));
+
         WebServer.stop();
     }
 }
