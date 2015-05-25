@@ -5,6 +5,8 @@ import com.igumnov.common.orm.Id;
 import com.igumnov.common.reflection.ReflectionException;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.net.URISyntaxException;
@@ -91,5 +93,12 @@ public class Reflection {
             }
         }
         throw new ReflectionException("No field");
+    }
+
+    public static String stackTraceToString(Exception e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString();
     }
 }

@@ -42,7 +42,9 @@ public class ORM {
                 Statement stmt=null;
                 try {
                     stmt = con.createStatement();
-                    stmt.execute("CREATE TABLE DDLHistory (id INT PRIMARY KEY, applyDate DATE)");
+                    String sql = "CREATE TABLE DDLHistory (id INT PRIMARY KEY, applyDate DATE)";
+                    stmt.execute(sql);
+                    Log.debug(sql);
                 } finally {
                     if(stmt!=null) {
                         try {
@@ -78,10 +80,10 @@ public class ORM {
                         try {
                             stmt = c.createStatement();
                             stmt.execute(line);
+                            Log.debug(line);
 
                         } catch (SQLException e) {
-                            // TODO Add log warning
-                            e.printStackTrace();
+                            Log.error("SQL error: ", e);
                         } finally {
                             try {
                                 if (stmt != null) stmt.close();

@@ -25,6 +25,7 @@ public class ORMTest {
             Folder.deleteWithContent("tmp");
             d.mkdir();
         }
+        Log.setLogLevel(Log.DEBUG);
     }
 
     @Test
