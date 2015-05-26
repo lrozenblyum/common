@@ -17,10 +17,11 @@ Common Java library functions:
 * Tasks/Threads
 * Reflection
 * JSON
+* URL
+* Logging
 * WebServer (Static Content/CGI/Rest support)
 * MVC Framework with Template Engine
 * Dependency Injection Framework
-* URL
 * ORM Framework
 
 Dependencies from other projects:
@@ -38,7 +39,7 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>3.0</version>
+      <version>3.1</version>
     </dependency>
 
 If you do not want use WebServer
@@ -174,9 +175,34 @@ Reflection
     Reflection.setField(object, "fieldName", value);
     Object value = Reflection.getFieldValue(object, "fieldName");
 
+
+Log
+
+    Log.setLogLevel(Log.INFO);
+    Log.disableStdout(); // by default enabled
+    Log.file("log_filename.log");
+    Log.info("Info message");
+
 Embedded WebServer
 
-    WebServer.init("localhost", 8181);
+    WebServer.init("localhost", 8080); // Init HTTP
+    WebServer.https(8443, "src/test/resources/key.jks", "storepwd", "keypwd"); // Init HTTPS
+
+Security
+
+    WebServer.security("/loginPage", "/loginPageError", "/logoutLink");
+    WebServer.addUser("username", "password", new String[]{"user_role","admin_role"});
+    WebServer.addAllowRule("/*");
+    WebServer.addRestrictRule("/script", new String[]{"user"});
+    WebServer.addHandler("/loginPage", (request) -> {
+        return "<form method='POST' action='/j_security_check'>"
+        + "<input type='text' name='j_username'/>"
+        + "<input type='password' name='j_password'/>"
+        + "<input type='submit' value='Login'/></form>";
+    });
+
+CGI/Static
+
     WebServer.addStaticContentHandler("/static", "/path_to_static_content");
     WebServer.addHandler("/script", (request) -> {
         return "Bla-Bla script result";
@@ -196,18 +222,18 @@ Rest controller
     });
 
 
-    WebServer.addRestController("/rest/put", ObjectDTO.class, (request, putObjectDTO) -> {
+    WebServer.addRestController("/rest/put", ObjectDTO.class, (request, putOrPostObjectDTO) -> {
         if (request.getMethod().equals(WebServer.METHOD_PUT)) {
-                putObjectDTO.getAttr();
+                putOrPostObjectDTO.getAttr();
                 ...
-                return putObjectDTO;
+                return resultObjectDTO;
         }
         throw new WebServerException("Unsupported method");
     });
 
 
 
-ModelViewController with TemplateEngine Framework
+Model-View-Controller with TemplateEngine Framework
 
     WebServer.addTemplates("/path_to_templates");
     WebServer.addController("/", (request, model) -> {

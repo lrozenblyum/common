@@ -29,9 +29,10 @@ public class WebServerTest {
 
 
         WebServer.init("localhost", 8181);
-        //WebServer.https(8282, "src/test/resources/key.jks", "storepwd", "keypwd");
-        WebServer.security("/*", "/login");
-
+        WebServer.https(8282, "src/test/resources/key.jks", "storepwd", "keypwd");
+        WebServer.security("/login", "/login", "/logout");
+        WebServer.addUser("username", "password", new String[]{"user"});
+        WebServer.addUser("admin", "admin", new String[] {"admin", "root"});
         WebServer.addStaticContentHandler("/static", "tmp");
         File.writeString("123", "tmp/webserver.txt");
 
@@ -43,8 +44,8 @@ public class WebServerTest {
             return "new new";
         });
 
-        WebServer.allow("/*");
-        WebServer.restrict("/new", new String[]{"user"});
+        WebServer.addAllowRule("/*");
+        WebServer.addRestrictRule("/new", new String[]{"user"});
 
         WebServer.addHandler("/login", (request) -> {
             return "<form method='POST' action='/j_security_check'>"
@@ -66,7 +67,7 @@ public class WebServerTest {
 
         });
 
-        WebServer.addRestController("/put", ObjectDTO.class, (request, postObject) -> {
+        WebServer.addRestController("/rest/put", ObjectDTO.class, (request, postObject) -> {
 
             if (request.getMethod().equals(WebServer.METHOD_PUT)) {
                 return postObject;
@@ -90,7 +91,7 @@ public class WebServerTest {
         ObjectDTO o = new ObjectDTO();
         o.setName("a");
         o.setSalary(1);
-        assertEquals(JSON.toString(o), URL.getAllToString("http://localhost:8181/put", WebServer.METHOD_PUT, null, JSON.toString(o)));
+        assertEquals(JSON.toString(o), URL.getAllToString("http://localhost:8181/rest/put", WebServer.METHOD_PUT, null, JSON.toString(o)));
 
         assertEquals("<html><head></head><body><span>123</span></body></html>", URL.getAllToString("http://localhost:8181/index"));
         assertNotEquals("new new", URL.getAllToString("http://localhost:8181/new"));

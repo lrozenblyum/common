@@ -11,12 +11,8 @@ import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.session.HashSessionIdManager;
-import org.eclipse.jetty.server.session.HashSessionManager;
-import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -43,13 +39,14 @@ public class WebServer {
     public static final String METHOD_DELETE = "DELETE";
 
 
-    private static  Server server;
+    private static Server server;
     private static ArrayList<ContextHandler> handlers = new ArrayList<ContextHandler>();
     private static String templateFolder;
     private static ServerConnector connector;
     private static ServerConnector https;
-    private static  ConstraintSecurityHandler securityHandler;
+    private static ConstraintSecurityHandler securityHandler;
     private static ServletContextHandler servletContext;
+    private static HashLoginService loginService = new HashLoginService();
 
     private WebServer() {
 
@@ -60,12 +57,9 @@ public class WebServer {
 
         server = new Server();
 
-        connector=new ServerConnector(server);
+        connector = new ServerConnector(server);
         connector.setHost(hostName);
         connector.setPort(port);
-
-
-
 
 
     }
@@ -90,10 +84,10 @@ public class WebServer {
     }
 
     public static void start() throws Exception {
-        if(https == null) {
+        if (https == null) {
             server.setConnectors(new Connector[]{connector});
         } else {
-            server.setConnectors(new Connector[]{connector,https});
+            server.setConnectors(new Connector[]{connector, https});
         }
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         Handler list[] = new Handler[handlers.size()];
@@ -103,6 +97,7 @@ public class WebServer {
 
         server.start();
     }
+
     public static void stop() throws Exception {
         server.stop();
     }
@@ -157,9 +152,10 @@ public class WebServer {
 
     }
 
-    public static void restrict(String path, String[] roles) {
+    public static void addRestrictRule(String path, String[] roles) {
         Constraint constraint = new Constraint();
-        constraint.setName(Constraint.__FORM_AUTH);;
+        constraint.setName(Constraint.__FORM_AUTH);
+        ;
         constraint.setRoles(roles);
         constraint.setAuthenticate(true);
 
@@ -170,9 +166,10 @@ public class WebServer {
         securityHandler.addConstraintMapping(constraintMapping);
     }
 
-    public static void allow(String path) {
+    public static void addAllowRule(String path) {
         Constraint constraint = new Constraint();
-        constraint.setName(Constraint.__FORM_AUTH);;
+        constraint.setName(Constraint.__FORM_AUTH);
+        ;
         constraint.setAuthenticate(false);
 
         ConstraintMapping constraintMapping = new ConstraintMapping();
@@ -182,32 +179,44 @@ public class WebServer {
         securityHandler.addConstraintMapping(constraintMapping);
     }
 
-    public static void security(String path, String loginPage) {
+    public static void security(String loginPage, String loginErrorPage, String logoutUrl) {
 
 
         securityHandler = new ConstraintSecurityHandler();
 
-        HashLoginService loginService = new HashLoginService();
-        loginService.putUser("username", new Password("password"), new String[]{"user"});
+
         securityHandler.setLoginService(loginService);
 
-        FormAuthenticator authenticator = new FormAuthenticator(loginPage, loginPage, false);
+        FormAuthenticator authenticator = new FormAuthenticator(loginPage, loginErrorPage, false);
         securityHandler.setAuthenticator(authenticator);
 
         servletContext = new ServletContextHandler(ServletContextHandler.SESSIONS | ServletContextHandler.SECURITY);
         servletContext.setSecurityHandler(securityHandler);
 
+
+        servletContext.addServlet(new ServletHolder(new DefaultServlet() {
+            @Override
+            protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+                request.getSession().invalidate();
+                response.sendRedirect(response.encodeRedirectURL(loginPage));
+            }
+        }), logoutUrl);
+
         handlers.add(servletContext);
     }
 
     static private void addServlet(HttpServlet s, String name) {
-        if(servletContext == null) {
+        if (servletContext == null) {
             servletContext = new ServletContextHandler();
         }
-        if(templateFolder!=null) {
+        if (templateFolder != null) {
             servletContext.setResourceBase(templateFolder);
         }
         servletContext.addServlet(new ServletHolder(s), name);
 
+    }
+
+    public static void addUser(String username, String password, String[] groups) {
+        loginService.putUser(username, new Password(password), groups);
     }
 }
