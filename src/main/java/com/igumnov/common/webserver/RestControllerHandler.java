@@ -37,6 +37,7 @@ public class RestControllerHandler extends HttpServlet {
         doGet(request,response);
     }
 
+
         @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
