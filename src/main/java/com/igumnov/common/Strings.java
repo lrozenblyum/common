@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 public class Strings {
 
-    static Stream<Character> stream(String s) {
+    public static Stream<Character> stream(String s) {
         int len = s.length();
         Character[] chars = new Character[len];
         for (int i = 0; i < len ; i++) {
