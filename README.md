@@ -19,6 +19,7 @@ Common Java library functions:
 * JSON
 * URL
 * Logging
+* Strings
 * WebServer (Static Content/CGI/Rest support)
 * MVC Framework with Template Engine
 * Dependency Injection Framework
@@ -39,7 +40,7 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>3.1</version>
+      <version>3.2</version>
     </dependency>
 
 If you do not want use WebServer
@@ -182,6 +183,13 @@ Log
     Log.disableStdout(); // by default enabled
     Log.file("log_filename.log");
     Log.info("Info message");
+
+Strings
+
+    String s = "some line";
+    Strings.stream(s).forEach((c) -> {
+        // do something by each char in string
+    });
 
 Embedded WebServer
 
