@@ -40,7 +40,7 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>3.2</version>
+      <version>3.3</version>
     </dependency>
 
 If you do not want use WebServer
