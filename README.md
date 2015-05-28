@@ -44,57 +44,10 @@ Maven:
     </dependency>
 
 
-If you do not want use WebServer
+Example project with using this library
 
-      <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-security</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-servlet</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.thymeleaf</groupId>
-                    <artifactId>thymeleaf</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>nz.net.ultraq.thymeleaf</groupId>
-	                <artifactId>thymeleaf-layout-dialect</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>net.sourceforge.nekohtml</groupId>
-                    <artifactId>nekohtml</artifactId>
-                </exclusion>
-      </exclusions>
-
-If you do not want use JSON
-
-      <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-      </exclusions>
-
-If you do not want use ORM
-
-      <exclusions>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-dbcp2</artifactId>
-                </exclusion>
-      </exclusions>
-
+    Githab: https://github.com/evgenyigumnov/example
+    Online version: http://java.igumnov.com:8181/ login: demo password: demo
 
 
 Sleep
@@ -370,4 +323,57 @@ Get connection from pool if you need send SQL directly
             if (con != null) con.close();
          } catch (Exception e) {}
     }
+
+
+
+If you do not want use WebServer
+
+      <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-security</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-servlet</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.thymeleaf</groupId>
+                    <artifactId>thymeleaf</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>nz.net.ultraq.thymeleaf</groupId>
+	                <artifactId>thymeleaf-layout-dialect</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.sourceforge.nekohtml</groupId>
+                    <artifactId>nekohtml</artifactId>
+                </exclusion>
+      </exclusions>
+
+If you do not want use JSON
+
+      <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+      </exclusions>
+
+If you do not want use ORM
+
+      <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-dbcp2</artifactId>
+                </exclusion>
+      </exclusions>
 
