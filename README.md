@@ -46,8 +46,9 @@ Maven:
 
 Example project with using this library
 
-    Githab: [https://github.com/evgenyigumnov/example]
-    Online version: [http://java.igumnov.com:8181/] login: demo password: demo
+Githab: [https://github.com/evgenyigumnov/example]
+Online version: [http://java.igumnov.com:8181/]
+login: demo password: demo
 
 
 Sleep
