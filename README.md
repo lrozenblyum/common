@@ -40,7 +40,7 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>3.6</version>
+      <version>3.7</version>
     </dependency>
 
 
@@ -62,6 +62,10 @@ If you do not want use WebServer
                 <exclusion>
                     <groupId>org.thymeleaf</groupId>
                     <artifactId>thymeleaf</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>nz.net.ultraq.thymeleaf</groupId>
+	                <artifactId>thymeleaf-layout-dialect</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

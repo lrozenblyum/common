@@ -2,6 +2,7 @@ package com.igumnov.common;
 
 
 import com.igumnov.common.webserver.*;
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
@@ -154,6 +155,7 @@ public class WebServer {
         templateResolver.setSuffix(".html");
         templateResolver.setCacheTTLMs(3600000L);
         templateEngine = new TemplateEngine();
+        templateEngine.addDialect(new LayoutDialect());
         templateEngine.setTemplateResolver(templateResolver);
 
     }
