@@ -32,7 +32,7 @@ public class WebServerTest {
         WebServer.https(8282, "src/test/resources/key.jks", "storepwd", "keypwd");
         WebServer.security("/login", "/login", "/logout");
         WebServer.addUser("username", "password", new String[]{"user"});
-        WebServer.addUser("admin", "admin", new String[] {"admin", "root"});
+        WebServer.addUser("admin", "admin", new String[]{"admin", "root"});
         WebServer.addStaticContentHandler("/static", "tmp");
         File.writeString("123", "tmp/webserver.txt");
 
@@ -77,7 +77,7 @@ public class WebServerTest {
 
         });
 
-        WebServer.addTemplates("tmp");
+        WebServer.addTemplates("tmp", 0);
         File.writeString("<html><body><span th:text=\"${varName}\"></span></body><html>", "tmp/example.html");
         WebServer.addController("/index", (request, model) -> {
             model.put("varName", new Integer("123"));

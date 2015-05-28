@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 public class WebServer {
@@ -135,25 +136,37 @@ public class WebServer {
         handlers.add(context);
     }
 
-    public static void addClassPathHandler(String name) {
+    public static void addClassPathHandler(String name, String classPath) {
         ContextHandler context = new ContextHandler();
         context.setContextPath(name);
-        ResourceHandler rh = new ResourceHandler();
+
+        ResourceHandler rh = new ResourceHandler() {
+            @Override
+            public Resource getResource(String path)
+                    throws MalformedURLException {
+                Resource resource = Resource.newClassPathResource(path);
+                if (resource == null || !resource.exists()) {
+                    resource = Resource.newClassPathResource(classPath + path);
+                }
+                return resource;
+            }
+        };
+
         rh.setDirectoriesListed(true);
-        rh.setBaseResource(Resource.newClassPathResource("/"));
+        rh.setResourceBase("/");
         context.setHandler(rh);
         handlers.add(context);
     }
 
 
-    public static void addTemplates(String folder) {
+    public static void addTemplates(String folder, long cacheTTL) {
         templateFolder = folder;
         ServletContextTemplateResolver templateResolver =
                 new ServletContextTemplateResolver();
         templateResolver.setTemplateMode("LEGACYHTML5");
         templateResolver.setPrefix("/");
         templateResolver.setSuffix(".html");
-        templateResolver.setCacheTTLMs(3600000L);
+        templateResolver.setCacheTTLMs(cacheTTL);
         templateEngine = new TemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
         templateEngine.addDialect(new LayoutDialect());
