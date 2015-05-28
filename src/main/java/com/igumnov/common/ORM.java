@@ -190,7 +190,7 @@ public class ORM {
         Transaction tx = null;
         try {
             tx = ORM.beginTransaction();
-            return delete(obj);
+            return tx.delete(obj);
 
         } finally {
             if (tx != null) {
