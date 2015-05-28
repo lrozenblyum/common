@@ -20,15 +20,12 @@ public class URL {
 
         java.net.URL urlObj = new java.net.URL(url);
         StringBuilder ret = new StringBuilder();
-        InputStreamReader stream = new InputStreamReader(urlObj.openStream(), "UTF-8");
-        try {
-            BufferedReader reader = new BufferedReader(stream);
-            for (int c = reader.read(); c != -1; c = reader.read()) {
-                ret.append((char) c);
+        try ( InputStreamReader stream = new InputStreamReader( urlObj.openStream(), "UTF-8" ) ) {
+            BufferedReader reader = new BufferedReader( stream );
+            for ( int c = reader.read(); c != -1; c = reader.read() ) {
+                ret.append( ( char ) c );
             }
 
-        } finally {
-            stream.close();
         }
         return ret.toString();
 

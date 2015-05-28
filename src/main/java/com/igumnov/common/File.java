@@ -17,12 +17,9 @@ public class File {
     }
 
     public static void writeString(String str, String fileName) throws IOException {
-        Writer out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(fileName), "UTF-8"));
-        try {
-            out.write(str);
-        } finally {
-            out.close();
+        try ( Writer out = new BufferedWriter( new OutputStreamWriter(
+                new FileOutputStream( fileName ), "UTF-8" ) ) ) {
+            out.write( str );
         }
     }
 
