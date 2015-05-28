@@ -19,7 +19,7 @@ public class URL {
     public static String getAllToString(String url) throws IOException {
 
         java.net.URL urlObj = new java.net.URL(url);
-        StringBuffer ret = new StringBuffer();
+        StringBuilder ret = new StringBuilder();
         InputStreamReader stream = new InputStreamReader(urlObj.openStream(), "UTF-8");
         try {
             BufferedReader reader = new BufferedReader(stream);
@@ -59,7 +59,7 @@ public class URL {
         conn.setDoOutput(true);
         conn.getOutputStream().write(postDataBytes);
         Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-        StringBuffer ret = new StringBuffer();
+        StringBuilder ret = new StringBuilder();
         for (int c = in.read(); c != -1; c = in.read()) {
             ret.append((char) c);
         }
