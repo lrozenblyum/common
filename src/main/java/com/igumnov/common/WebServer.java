@@ -14,6 +14,7 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.thymeleaf.TemplateEngine;
@@ -132,6 +133,17 @@ public class WebServer {
         context.setHandler(rh);
         handlers.add(context);
     }
+
+    public static void addClassPathHandler(String name) {
+        ContextHandler context = new ContextHandler();
+        context.setContextPath(name);
+        ResourceHandler rh = new ResourceHandler();
+        rh.setDirectoriesListed(true);
+        rh.setBaseResource(Resource.newClassPathResource("/"));
+        context.setHandler(rh);
+        handlers.add(context);
+    }
+
 
     public static void addTemplates(String folder) {
         templateFolder = folder;
