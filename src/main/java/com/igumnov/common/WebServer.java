@@ -155,8 +155,8 @@ public class WebServer {
         templateResolver.setSuffix(".html");
         templateResolver.setCacheTTLMs(3600000L);
         templateEngine = new TemplateEngine();
-        templateEngine.addDialect(new LayoutDialect());
         templateEngine.setTemplateResolver(templateResolver);
+        templateEngine.addDialect(new LayoutDialect());
 
     }
 
