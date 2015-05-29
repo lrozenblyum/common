@@ -26,7 +26,7 @@ public class ORM {
 
     }
 
-    public static void applyDDL(String sqlFolder) throws java.sql.SQLException, IOException, ReflectionException, IllegalAccessException, InstantiationException {
+    public static void applyDDL(String sqlFolder) throws SQLException, IOException, ReflectionException, IllegalAccessException, InstantiationException {
         Connection con = null;
         int i=1;
         ResultSet tables=null;
@@ -47,9 +47,7 @@ public class ORM {
                     Log.debug(sql);
                 } finally {
                     if(stmt!=null) {
-                        try {
                             stmt.close();
-                        } catch (Exception e) {}
                     }
                 }
 
@@ -59,14 +57,8 @@ public class ORM {
             tables.close();
 
         } finally {
-            try {
                 if (con != null) con.close();
-            } catch (Exception e) {
-            }
-            try {
                 if (tables != null) tables.close();
-            } catch (Exception e) {
-            }
 
         }
 
@@ -88,6 +80,7 @@ public class ORM {
                             try {
                                 if (stmt != null) stmt.close();
                             } catch (Exception e) {
+                                Log.error("SQL error: ", e);
                             }
                         }
                     });
@@ -97,13 +90,10 @@ public class ORM {
                     ddl.setApplyDate(new java.util.Date());
                     insert(ddl);
                 } finally {
-                    try {
                         if (c != null) {
                             c.setAutoCommit(true);
                             c.close();
                         }
-                    } catch (Exception e) {
-                    }
                 }
             }
         } catch (NoSuchFileException e) {
