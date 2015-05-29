@@ -294,23 +294,18 @@ Autocommit mode
 
 Transactional mode
 
-    Transaction tx=null;
-    try {
-        tx = ORM.beginTransaction();
-        ObjectDTO obj = new ObjectDTO();
-        obj.setName("a");
-        obj.setSalary(1);
-        obj = (ObjectDTO) tx.insert(obj);
-        obj = (ObjectDTO) tx.findOne(ObjectDTO.class, new Long(1));
-        ArrayList<Object> = tx.findBy("id > ? and salary = ? order by id limit 1", ObjectDTO.class, new Long(0), new Integer(1))
-        obj.setName("b");
-        obj = (ObjectDTO) tx.update(obj);
-        ORM.delete(obj);
-    } finally {
-        if (tx != null) {
-            tx.commit();
-        }
-    }
+    Transaction tx = ORM.beginTransaction();
+    ObjectDTO obj = new ObjectDTO();
+    obj.setName("a");
+    obj.setSalary(1);
+    obj = (ObjectDTO) tx.insert(obj);
+    obj = (ObjectDTO) tx.findOne(ObjectDTO.class, new Long(1));
+    ArrayList<Object> = tx.findBy("id > ? and salary = ? order by id limit 1", ObjectDTO.class, new Long(0), new Integer(1))
+    obj.setName("b");
+    obj = (ObjectDTO) tx.update(obj);
+    ORM.delete(obj);
+    tx.commit();
+
 
 Get connection from pool if you need send SQL directly
 
