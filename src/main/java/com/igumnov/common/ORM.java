@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ORM {
     private static BasicDataSource ds;
@@ -120,97 +121,111 @@ public class ORM {
 
     public static Object update(Object obj) throws IllegalAccessException, SQLException {
         Transaction tx = null;
+        Object ret;
         try {
             tx = ORM.beginTransaction();
-            return tx.update(obj);
+            ret = tx.update(obj);
 
         } finally {
             if (tx != null) {
                 tx.commit();
             }
         }
+        return ret;
 
     }
 
 
     public static Object insert(Object obj) throws IllegalAccessException, SQLException, ReflectionException {
         Transaction tx = null;
+        Object ret;
         try {
             tx = ORM.beginTransaction();
-            return tx.insert(obj);
+            ret = tx.insert(obj);
 
         } finally {
             if (tx != null) {
                 tx.commit();
             }
         }
+        return ret;
 
     }
 
     public static ArrayList<Object> findBy(String where, Class classObject, Object... params) throws SQLException, IllegalAccessException, InstantiationException, ReflectionException {
         Transaction tx = null;
+        ArrayList<Object> ret;
         try {
             tx = ORM.beginTransaction();
-            return tx.findBy(where,classObject,params);
+            ret = tx.findBy(where,classObject,params);
 
         } finally {
             if (tx != null) {
                 tx.commit();
             }
         }
+        return ret;
     }
 
     public static Object findOne(Class className, Object primaryKey) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException {
         Transaction tx = null;
+        Object ret;
         try {
             tx = ORM.beginTransaction();
-            return tx.findOne(className,primaryKey);
+            ret =  tx.findOne(className,primaryKey);
 
         } finally {
             if (tx != null) {
                 tx.commit();
             }
         }
+        return ret;
     }
 
     public static int deleteBy(String where, Class classObject, Object... params) throws SQLException {
         Transaction tx = null;
+        int ret;
         try {
             tx = ORM.beginTransaction();
-            return tx.deleteBy(where,classObject,params);
+            ret = tx.deleteBy(where,classObject,params);
 
         } finally {
             if (tx != null) {
                 tx.commit();
             }
         }
+        return ret;
     }
 
     public static int delete(Object obj) throws IllegalAccessException, SQLException {
         Transaction tx = null;
+        int ret;
         try {
             tx = ORM.beginTransaction();
-            return tx.delete(obj);
+            ret = tx.delete(obj);
 
         } finally {
             if (tx != null) {
                 tx.commit();
             }
         }
+        return ret;
     }
 
     public static ArrayList<Object> findAll(Class classObject) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException {
 
         Transaction tx = null;
+        ArrayList<Object> ret;
         try {
             tx = ORM.beginTransaction();
-            return tx.findAll(classObject);
+            ret = tx.findAll(classObject);
 
         } finally {
             if (tx != null) {
                 tx.commit();
             }
         }
+        return ret;
 
     }
 
