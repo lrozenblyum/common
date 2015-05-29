@@ -28,26 +28,26 @@ public class ORM {
 
     public static void applyDDL(String sqlFolder) throws SQLException, IOException, ReflectionException, IllegalAccessException, InstantiationException {
         Connection con = null;
-        int i=1;
-        ResultSet tables=null;
+        int i = 1;
+        ResultSet tables = null;
         try {
             con = ds.getConnection();
             DatabaseMetaData dbm = con.getMetaData();
             tables = dbm.getTables(null, null, "DDLHISTORY", null);
             if (tables.next()) {
                 ArrayList<Object> ret = findBy("true order by id limit 1", DDLHistory.class);
-                i = 1 + ((DDLHistory)ret.get(0)).getId();
+                i = 1 + ((DDLHistory) ret.get(0)).getId();
             } else {
 
-                Statement stmt=null;
+                Statement stmt = null;
                 try {
                     stmt = con.createStatement();
                     String sql = "CREATE TABLE DDLHistory (id INT PRIMARY KEY, applyDate DATE)";
                     stmt.execute(sql);
                     Log.debug(sql);
                 } finally {
-                    if(stmt!=null) {
-                            stmt.close();
+                    if (stmt != null) {
+                        stmt.close();
                     }
                 }
 
@@ -57,14 +57,14 @@ public class ORM {
             tables.close();
 
         } finally {
-                if (con != null) con.close();
-                if (tables != null) tables.close();
+            if (con != null) con.close();
+            if (tables != null) tables.close();
 
         }
 
         try {
             for (; true; i++) {
-                Connection c=ds.getConnection();
+                Connection c = ds.getConnection();
                 try {
                     c.setAutoCommit(false);
                     File.readLines(sqlFolder + "/" + i + ".sql").forEach((line) -> {
@@ -90,10 +90,10 @@ public class ORM {
                     ddl.setApplyDate(new java.util.Date());
                     insert(ddl);
                 } finally {
-                        if (c != null) {
-                            c.setAutoCommit(true);
-                            c.close();
-                        }
+                    if (c != null) {
+                        c.setAutoCommit(true);
+                        c.close();
+                    }
                 }
             }
         } catch (NoSuchFileException e) {
@@ -107,117 +107,66 @@ public class ORM {
     }
 
 
-
     public static Object update(Object obj) throws IllegalAccessException, SQLException {
-        Transaction tx = null;
-        Object ret;
-        try {
-            tx = ORM.beginTransaction();
-            ret = tx.update(obj);
 
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
+        Object ret;
+        Transaction tx = ORM.beginTransaction();
+        ret = tx.update(obj);
+        tx.commit();
         return ret;
 
     }
 
 
     public static Object insert(Object obj) throws IllegalAccessException, SQLException, ReflectionException {
-        Transaction tx = null;
         Object ret;
-        try {
-            tx = ORM.beginTransaction();
-            ret = tx.insert(obj);
-
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
+        Transaction tx  = ORM.beginTransaction();
+        ret = tx.insert(obj);
+        tx.commit();
         return ret;
 
     }
 
     public static ArrayList<Object> findBy(String where, Class classObject, Object... params) throws SQLException, IllegalAccessException, InstantiationException, ReflectionException {
-        Transaction tx = null;
         ArrayList<Object> ret;
-        try {
-            tx = ORM.beginTransaction();
-            ret = tx.findBy(where,classObject,params);
-
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
+        Transaction tx = ORM.beginTransaction();
+        ret = tx.findBy(where, classObject, params);
+        tx.commit();
         return ret;
     }
 
     public static Object findOne(Class className, Object primaryKey) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException {
-        Transaction tx = null;
         Object ret;
-        try {
-            tx = ORM.beginTransaction();
-            ret =  tx.findOne(className,primaryKey);
-
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
+        Transaction tx  = ORM.beginTransaction();
+        ret = tx.findOne(className, primaryKey);
+        tx.commit();
         return ret;
     }
 
     public static int deleteBy(String where, Class classObject, Object... params) throws SQLException {
-        Transaction tx = null;
         int ret;
-        try {
-            tx = ORM.beginTransaction();
-            ret = tx.deleteBy(where,classObject,params);
-
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
+        Transaction tx  = ORM.beginTransaction();
+        ret = tx.deleteBy(where, classObject, params);
+        tx.commit();
         return ret;
     }
 
     public static int delete(Object obj) throws IllegalAccessException, SQLException {
-        Transaction tx = null;
         int ret;
-        try {
-            tx = ORM.beginTransaction();
-            ret = tx.delete(obj);
-
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
+        Transaction tx  = ORM.beginTransaction();
+        ret = tx.delete(obj);
+        tx.commit();
         return ret;
     }
 
     public static ArrayList<Object> findAll(Class classObject) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException {
 
-        Transaction tx = null;
         ArrayList<Object> ret;
-        try {
-            tx = ORM.beginTransaction();
-            ret = tx.findAll(classObject);
-
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
+        Transaction tx = ORM.beginTransaction();
+        ret = tx.findAll(classObject);
+        tx.commit();
         return ret;
-
     }
-
 
 
 }
