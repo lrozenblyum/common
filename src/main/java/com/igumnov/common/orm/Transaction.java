@@ -135,12 +135,7 @@ public class Transaction {
 
         Set<String> fieldsSet = fields.keySet();
         String names = fieldsSet.stream().collect(Collectors.joining(","));
-        String values;
-        {
-            StringJoiner joiner = new StringJoiner(",");
-            for (int i = fieldsSet.size(); i > 0; i--) joiner.add("?");
-            values = joiner.toString();
-        }
+        String values = fieldsSet.stream().map(it -> "?").collect(Collectors.joining(","));
 
         String sql = "insert into " + obj.getClass().getSimpleName() + "(" + names + ") values (" + values + ")";
         PreparedStatement preparedStatement = null;
