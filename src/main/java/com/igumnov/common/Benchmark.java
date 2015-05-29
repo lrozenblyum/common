@@ -28,8 +28,6 @@ public class Benchmark {
 
             timer.start();
 
-        } catch (TimeException e) {
-            throw e;
         } finally {
             timersLock.writeLock().unlock();
         }
@@ -46,8 +44,6 @@ public class Benchmark {
                 throw new TimeException("startProcedure should be call before");
             }
             return timer.pause();
-        } catch (TimeException e) {
-            throw e;
         } finally {
             timersLock.readLock().unlock();
         }
@@ -64,8 +60,6 @@ public class Benchmark {
             }
             timer.resume();
 
-        } catch (TimeException e) {
-            throw e;
         } finally {
             timersLock.readLock().unlock();
         }
@@ -86,8 +80,6 @@ public class Benchmark {
             timers.remove(name);
             return ret;
 
-        } catch (TimeException e) {
-            throw e;
         } finally {
             timersLock.writeLock().unlock();
         }
@@ -123,8 +115,6 @@ public class Benchmark {
                 timers.put(name, timer);
                 timer.start();
             }
-        } catch (TimeException e) {
-            throw e;
         } finally {
             timersLock.writeLock().unlock();
         }
@@ -147,8 +137,6 @@ public class Benchmark {
             }
             return timer.getRepeatCount();
 
-        } catch (TimeException e) {
-            throw e;
         } finally {
             timersLock.readLock().unlock();
         }
@@ -165,8 +153,6 @@ public class Benchmark {
             }
             return timer.getAverageTime();
 
-        } catch (TimeException e) {
-            throw e;
         } finally {
             timersLock.readLock().unlock();
         }
@@ -183,8 +169,6 @@ public class Benchmark {
             }
             return timer.getTotlaTime();
 
-        } catch (TimeException e) {
-            throw e;
         } finally {
             timersLock.readLock().unlock();
         }

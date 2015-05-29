@@ -47,7 +47,7 @@ public class RestControllerHandler extends HttpServlet {
         Object responseObj = null;
         int status = HttpServletResponse.SC_OK;
         if(request.getMethod().equals("POST") || request.getMethod().equals("PUT") ) {
-            StringBuffer jb = new StringBuffer();
+            StringBuilder jb = new StringBuilder();
             String line = null;
             try {
                 BufferedReader reader = request.getReader();

@@ -69,14 +69,13 @@ public class Transaction {
 
         String names = "";
         Set<String> fieldsSet = fields.keySet();
-        Iterator<String> it = fieldsSet.iterator();
 
         // TODO Replace to StringBuffer
-        while (it.hasNext()) {
-            if (names.length() != 0) {
+        for ( String aFieldsSet : fieldsSet ) {
+            if ( names.length() != 0 ) {
                 names = names + ",";
             }
-            names = names + it.next() + "=?";
+            names = names + aFieldsSet + "=?";
 
         }
 
@@ -89,7 +88,7 @@ public class Transaction {
             preparedStatement = connection.prepareStatement(sql);
 
 
-            it = fieldsSet.iterator();
+            Iterator<String> it = fieldsSet.iterator();
             int i = 1;
             while (it.hasNext()) {
                 Object value = fields.get(it.next());
@@ -145,16 +144,15 @@ public class Transaction {
         String names = "";
         String values = "";
         Set<String> fieldsSet = fields.keySet();
-        Iterator<String> it = fieldsSet.iterator();
 
         // TODO Replace to StringBuffer
-        while (it.hasNext()) {
-            if (names.length() != 0) {
+        for ( String aFieldsSet : fieldsSet ) {
+            if ( names.length() != 0 ) {
                 names = names + ",";
             }
-            names = names + it.next();
+            names = names + aFieldsSet;
 
-            if (values.length() != 0) {
+            if ( values.length() != 0 ) {
                 values = values + ",";
             }
             values = values + "?";
@@ -171,7 +169,7 @@ public class Transaction {
             }
 
 
-            it = fieldsSet.iterator();
+            Iterator<String> it = fieldsSet.iterator();
             int i = 1;
             while (it.hasNext()) {
                 preparedStatement.setObject(i, fields.get(it.next()));
