@@ -9,6 +9,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Transaction {
     private Connection connection;
