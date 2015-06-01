@@ -14,12 +14,13 @@ Common Java library functions:
 * Timer for Benchmark
 * Random range generator
 * File operations
-* Tasks/Threads
+* Tasks/Threads/Scheduler
 * Reflection
 * JSON
 * URL
 * Logging
 * Strings
+* Memory Cache (Key-Value and tags)
 * WebServer (Static Content/CGI/Rest support)
 * MVC Framework with Template Engine
 * Dependency Injection Framework
@@ -40,7 +41,7 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>3.15</version>
+      <version>4.0</version>
     </dependency>
 
 
@@ -92,6 +93,11 @@ Tasks
     });
     // Do something
     Object result = taskResult.get();
+
+    Task.schedule(() -> {
+        // Procedure code there
+    }, repeatAfterSeconds);
+
 
 Benchmark
 
@@ -149,6 +155,18 @@ Strings
     Strings.stream(s).forEach((c) -> {
         // do something by each char in string
     });
+
+
+Memory Cache (Key-Value and tags)
+
+    Cache.init(maxKeySize, defaultTTLInSeconds);
+    Cache.put("keyStr", valueObject);
+    Cache.put("keyStr", valueObject, TTLInSeconds, "tag1"...);
+    Cache.put("keyStr", valueObject, "tag1"...);
+    Cache.remove("keyStr");
+    Cache.removeByTag("tag1");
+    Object valueObject = Cache.get("keyStr");
+
 
 Embedded WebServer
 
