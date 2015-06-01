@@ -18,6 +18,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import org.eclipse.jetty.util.security.Password;
@@ -50,15 +51,23 @@ public class WebServer {
     private static ConstraintSecurityHandler securityHandler;
     private static ServletContextHandler servletContext;
     private static HashLoginService loginService = new HashLoginService();
+    private static QueuedThreadPool threadPool = null;
 
     private WebServer() {
 
     }
 
+    public static void setPoolSize(int min, int max) {
+        threadPool = new QueuedThreadPool(max, min);
+    }
 
     public static void init(String hostName, int port) {
 
-        server = new Server();
+        if (threadPool != null) {
+            server = new Server(threadPool);
+        } else {
+            server = new Server();
+        }
 
         connector = new ServerConnector(server);
         connector.setHost(hostName);

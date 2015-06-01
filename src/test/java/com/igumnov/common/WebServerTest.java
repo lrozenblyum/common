@@ -26,7 +26,7 @@ public class WebServerTest {
     @Test
     public void testWebServer() throws Exception {
 
-
+        WebServer.setPoolSize(10,40);
         WebServer.init("localhost", 8181);
         WebServer.https(8282, "src/test/resources/key.jks", "storepwd", "keypwd");
         WebServer.security("/login", "/login", "/logout");

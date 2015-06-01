@@ -41,7 +41,7 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>4.0</version>
+      <version>4.1</version>
     </dependency>
 
 
@@ -170,6 +170,7 @@ Memory Cache (Key-Value and tags)
 
 Embedded WebServer
 
+    WebServer.setPoolSize(minPoolSize,maxPoolSize);
     WebServer.init("localhost", 8080); // Init HTTP
     WebServer.https(8443, "src/test/resources/key.jks", "storepwd", "keypwd"); // Init HTTPS
 
