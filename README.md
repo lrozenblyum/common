@@ -52,110 +52,6 @@ Online version: http://java.igumnov.com:8181/
 login: demo password: demo
 
 
-Sleep
-
-    Benchmark.timerStart();
-    Time.sleepInSeconds(1.5);
-    System.out.println("Sleep time: " + Benchmark.timerStop() + "ms");
-
-Random generator
-
-    int rndInt = Number.randomIntByRange(-10, 300);
-    long rndLong = Number.randomLongByRange(-5L, -2L);
-    double rndDouble = Number.randomDoubleByRange(100.5, 2222.343);
-
-File/Folder
-
-    File.writeString("Some text", "dir/somefile.txt");
-    File.appendLine("Other line text", "dir/somefile.txt");
-    File.readLines("dir/somefile.txt").forEach((line) -> {
-        System.out.println(line);
-    });
-
-    String fileContent = File.readAllToString("dir/somefile.txt");
-    Folder.deleteWithContent"tmp/someDirForDeletion");
-    Folder.copyWithContent("/src.dir","/target.dir");
-
-Tasks
-
-    Future<?> task = Task.startProcedure(() -> {
-        // Long time procedure code there
-    });
-    // Do something
-    if(!task.isDone()) {
-       task.get(); // Wait for done
-    }
-
-    Task.setThreadPoolSize(2); // Default value: 10
-    Future<Object> taskResult = Task.startFunction(() -> {
-        // Long time function code there
-        return resultObject;
-    });
-    // Do something
-    Object result = taskResult.get();
-
-    Task.schedule(() -> {
-        // Procedure code there
-    }, repeatAfterSeconds);
-
-
-Benchmark
-
-    Benchmark.timerStart("loop1");
-    for(int i = 0; i<10000 ; ++i) {
-        // do something
-    }
-    System.out.println("loop1 time: " + Benchmark.timerStop("loop1") + "ms");
-
-    Benchmark.timerStart("pausedTimer");
-    // do something
-    Benchmark.timerPause("pausedTimer");
-    // do something
-    Benchmark.timerResume("pausedTimer");
-    // do something
-    System.out.println("pausedTimer time: " + Benchmark.timerStop("pausedTimer") + "ms");
-
-    for(int i = 0; i<10000 ; ++i) {
-        Benchmark.timerBegin("loop2");
-        // do something
-        Benchmark.timerEnd("loop2");
-    }
-    System.out.println("loop2 total time: " + Benchmark.timerGetTotalTime("loop2") + "ms");
-    System.out.println("loop2 repeat count: " + Benchmark.timerGetRepeatCount("loop2"));
-    System.out.println("loop2 average time: " + Benchmark.timerGetAverageTime("loop2") + "ms");
-
-JSON
-
-    SomePOJO obj = (SomePOJO) JSON.parse(jsonString, SomePOJO.class));
-    String json = JSON.toString(obj);
-
-URL
-
-    String responseBody = URL.getAllToString("http://localhost:8181/script");
-    // Extended version: getAllToString(String url, String method, Map<String, Object> postParams, String postBody)
-
-
-Reflection
-
-    ArrayList<String> names = Reflection.getClassNamesFromPackage("com.your_package_name");
-    Reflection.setField(object, "fieldName", value);
-    Object value = Reflection.getFieldValue(object, "fieldName");
-
-
-Log
-
-    Log.setLogLevel(Log.INFO);
-    Log.disableStdout(); // by default enabled
-    Log.file("log_filename.log");
-    Log.info("Info message");
-
-Strings
-
-    String s = "some line";
-    Strings.stream(s).forEach((c) -> {
-        // do something by each char in string
-    });
-
 
 Memory Cache (Key-Value and tags)
 
@@ -338,6 +234,112 @@ Get connection from pool if you need send SQL directly
             if (con != null) con.close();
          } catch (Exception e) {}
     }
+
+
+
+Sleep
+
+    Benchmark.timerStart();
+    Time.sleepInSeconds(1.5);
+    System.out.println("Sleep time: " + Benchmark.timerStop() + "ms");
+
+Random generator
+
+    int rndInt = Number.randomIntByRange(-10, 300);
+    long rndLong = Number.randomLongByRange(-5L, -2L);
+    double rndDouble = Number.randomDoubleByRange(100.5, 2222.343);
+
+File/Folder
+
+    File.writeString("Some text", "dir/somefile.txt");
+    File.appendLine("Other line text", "dir/somefile.txt");
+    File.readLines("dir/somefile.txt").forEach((line) -> {
+        System.out.println(line);
+    });
+
+    String fileContent = File.readAllToString("dir/somefile.txt");
+    Folder.deleteWithContent"tmp/someDirForDeletion");
+    Folder.copyWithContent("/src.dir","/target.dir");
+
+Tasks
+
+    Future<?> task = Task.startProcedure(() -> {
+        // Long time procedure code there
+    });
+    // Do something
+    if(!task.isDone()) {
+       task.get(); // Wait for done
+    }
+
+    Task.setThreadPoolSize(2); // Default value: 10
+    Future<Object> taskResult = Task.startFunction(() -> {
+        // Long time function code there
+        return resultObject;
+    });
+    // Do something
+    Object result = taskResult.get();
+
+    Task.schedule(() -> {
+        // Procedure code there
+    }, repeatAfterSeconds);
+
+
+Benchmark
+
+    Benchmark.timerStart("loop1");
+    for(int i = 0; i<10000 ; ++i) {
+        // do something
+    }
+    System.out.println("loop1 time: " + Benchmark.timerStop("loop1") + "ms");
+
+    Benchmark.timerStart("pausedTimer");
+    // do something
+    Benchmark.timerPause("pausedTimer");
+    // do something
+    Benchmark.timerResume("pausedTimer");
+    // do something
+    System.out.println("pausedTimer time: " + Benchmark.timerStop("pausedTimer") + "ms");
+
+    for(int i = 0; i<10000 ; ++i) {
+        Benchmark.timerBegin("loop2");
+        // do something
+        Benchmark.timerEnd("loop2");
+    }
+    System.out.println("loop2 total time: " + Benchmark.timerGetTotalTime("loop2") + "ms");
+    System.out.println("loop2 repeat count: " + Benchmark.timerGetRepeatCount("loop2"));
+    System.out.println("loop2 average time: " + Benchmark.timerGetAverageTime("loop2") + "ms");
+
+JSON
+
+    SomePOJO obj = (SomePOJO) JSON.parse(jsonString, SomePOJO.class));
+    String json = JSON.toString(obj);
+
+URL
+
+    String responseBody = URL.getAllToString("http://localhost:8181/script");
+    // Extended version: getAllToString(String url, String method, Map<String, Object> postParams, String postBody)
+
+
+Reflection
+
+    ArrayList<String> names = Reflection.getClassNamesFromPackage("com.your_package_name");
+    Reflection.setField(object, "fieldName", value);
+    Object value = Reflection.getFieldValue(object, "fieldName");
+
+
+Log
+
+    Log.setLogLevel(Log.INFO);
+    Log.disableStdout(); // by default enabled
+    Log.file("log_filename.log");
+    Log.info("Info message");
+
+Strings
+
+    String s = "some line";
+    Strings.stream(s).forEach((c) -> {
+        // do something by each char in string
+    });
 
 
 
