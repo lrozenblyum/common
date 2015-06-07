@@ -213,8 +213,10 @@ public class Transaction {
             while (r.next()) {
                 Object row = classObject.newInstance();
                 for (Field field : classObject.getDeclaredFields()) {
-                    field.setAccessible(true);
-                    Reflection.setField(row, field.getName(), r.getObject(field.getName()));
+                    if(!java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+                        field.setAccessible(true);
+                        Reflection.setField(row, field.getName(), r.getObject(field.getName()));
+                    }
                 }
                 ret.add(row);
             }
