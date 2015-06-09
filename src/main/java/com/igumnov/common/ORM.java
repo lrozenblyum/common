@@ -127,7 +127,7 @@ public class ORM {
 
     }
 
-    public static ArrayList<Object> findBy(String where, Class classObject, Object... params) throws SQLException, IllegalAccessException, InstantiationException, ReflectionException {
+    public static ArrayList<Object> findBy(String where, Class classObject, Object... params) throws SQLException, IllegalAccessException, InstantiationException, ReflectionException, IOException {
         ArrayList<Object> ret;
         Transaction tx = ORM.beginTransaction();
         ret = tx.findBy(where, classObject, params);
@@ -135,7 +135,7 @@ public class ORM {
         return ret;
     }
 
-    public static Object findOne(Class className, Object primaryKey) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException {
+    public static Object findOne(Class className, Object primaryKey) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException, IOException {
         Object ret;
         Transaction tx  = ORM.beginTransaction();
         ret = tx.findOne(className, primaryKey);
@@ -159,7 +159,7 @@ public class ORM {
         return ret;
     }
 
-    public static ArrayList<Object> findAll(Class classObject) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException {
+    public static ArrayList<Object> findAll(Class classObject) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException, IOException {
 
         ArrayList<Object> ret;
         Transaction tx = ORM.beginTransaction();

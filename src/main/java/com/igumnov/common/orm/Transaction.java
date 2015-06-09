@@ -5,6 +5,8 @@ import com.igumnov.common.Log;
 import com.igumnov.common.Reflection;
 import com.igumnov.common.reflection.ReflectionException;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.sql.*;
@@ -179,7 +181,7 @@ public class Transaction {
         return obj;
     }
 
-    public ArrayList<Object> findBy(String where, Class classObject, Object... params) throws SQLException, IllegalAccessException, InstantiationException, ReflectionException {
+    public ArrayList<Object> findBy(String where, Class classObject, Object... params) throws SQLException, IllegalAccessException, InstantiationException, ReflectionException, IOException {
         ArrayList<Object> ret = new ArrayList<>();
         String names = "";
         for (Field field : classObject.getDeclaredFields()) {
@@ -215,7 +217,22 @@ public class Transaction {
                 for (Field field : classObject.getDeclaredFields()) {
                     if(!java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
                         field.setAccessible(true);
-                        Reflection.setField(row, field.getName(), r.getObject(field.getName()));
+                        Object value = r.getObject(field.getName());
+                        if(value instanceof java.sql.Clob) {
+
+                            Reader reader = ((Clob) value).getCharacterStream();
+
+                            int intValueOfChar;
+                            String targetString = "";
+                            while ((intValueOfChar = reader.read()) != -1) {
+                                targetString += (char) intValueOfChar;
+                            }
+                            reader.close();
+
+                            Reflection.setField(row, field.getName(), targetString);
+                        } else {
+                            Reflection.setField(row, field.getName(), value);
+                        }
                     }
                 }
                 ret.add(row);
@@ -237,7 +254,7 @@ public class Transaction {
         return ret;
     }
 
-    public Object findOne(Class className, Object primaryKey) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException {
+    public Object findOne(Class className, Object primaryKey) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException, IOException {
         String pkName = null;
         for (Field field : className.getDeclaredFields()) {
             for (Annotation annotation : field.getDeclaredAnnotations())
@@ -299,7 +316,7 @@ public class Transaction {
         return deleteBy(pkName+"=?", obj.getClass(), pkValue);
     }
 
-    public ArrayList<Object> findAll(Class classObject) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException {
+    public ArrayList<Object> findAll(Class classObject) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException, IOException {
         return findBy(null, classObject);
     }
 }
