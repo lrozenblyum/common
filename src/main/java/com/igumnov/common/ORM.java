@@ -34,24 +34,34 @@ public class ORM {
             con = ds.getConnection();
             DatabaseMetaData dbm = con.getMetaData();
             tables = dbm.getTables(null, null, "DDLHISTORY", null);
+
             if (tables.next()) {
                 ArrayList<Object> ret = findBy("true order by id limit 1", DDLHistory.class);
                 i = 1 + ((DDLHistory) ret.get(0)).getId();
             } else {
-
-                Statement stmt = null;
+                ResultSet tables2 = null;
                 try {
-                    stmt = con.createStatement();
-                    String sql = "CREATE TABLE DDLHistory (id INT PRIMARY KEY, applyDate DATE)";
-                    stmt.execute(sql);
-                    Log.debug(sql);
-                } finally {
-                    if (stmt != null) {
-                        stmt.close();
+                    tables2 = dbm.getTables(null, null, "DDLHistory", null);
+                    if (tables2.next()) {
+                        ArrayList<Object> ret = findBy("true order by id limit 1", DDLHistory.class);
+                        i = 1 + ((DDLHistory) ret.get(0)).getId();
+                    } else {
+                        Statement stmt = null;
+                        try {
+                            stmt = con.createStatement();
+                            String sql = "CREATE TABLE DDLHistory (id INT PRIMARY KEY, applyDate DATE)";
+                            stmt.execute(sql);
+                            Log.debug(sql);
+                        } finally {
+                            if (stmt != null) {
+                                stmt.close();
+                            }
+                        }
                     }
+
+                } finally {
+                    if (tables2 != null) tables.close();
                 }
-
-
             }
 
             tables.close();

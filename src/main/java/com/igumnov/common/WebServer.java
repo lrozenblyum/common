@@ -120,6 +120,13 @@ public class WebServer {
         addServlet(new StringHandler(i), name);
     }
 
+    public static void addBinaryHandler(String name, BinaryInterface i) {
+
+
+        addServlet(new BinaryHandler(i), name);
+    }
+
+
     public static void addRestController(String name, Class c, RestControllerInterface i) {
 
 
