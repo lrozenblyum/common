@@ -36,14 +36,14 @@ public class ORM {
             tables = dbm.getTables(null, null, "DDLHISTORY", null);
 
             if (tables.next()) {
-                ArrayList<Object> ret = findBy("true order by id limit 1", DDLHistory.class);
+                ArrayList<Object> ret = findBy("true order by id desc limit 1", DDLHistory.class);
                 i = 1 + ((DDLHistory) ret.get(0)).getId();
             } else {
                 ResultSet tables2 = null;
                 try {
                     tables2 = dbm.getTables(null, null, "DDLHistory", null);
                     if (tables2.next()) {
-                        ArrayList<Object> ret = findBy("true order by id limit 1", DDLHistory.class);
+                        ArrayList<Object> ret = findBy("true order by id desc limit 1", DDLHistory.class);
                         i = 1 + ((DDLHistory) ret.get(0)).getId();
                     } else {
                         Statement stmt = null;
