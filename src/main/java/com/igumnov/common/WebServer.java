@@ -18,6 +18,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.security.Constraint;
+import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.thymeleaf.TemplateEngine;
@@ -263,12 +264,10 @@ public class WebServer {
 
 
     public static void addUserWithEncryptedPassword(String username, String password, String[] groups) throws ReflectionException, IllegalAccessException {
-        Password pwd = new Password("");
-        Reflection.setField(pwd, "_pw", password);
-        loginService.putUser(username, pwd, groups);
+        loginService.putUser(username, Credential.Crypt.getCredential(password), groups);
     }
 
     public static void addUser(String username, String password, String[] groups) {
-        loginService.putUser(username, new Password(password), groups);
+        loginService.putUser(username, Credential.Crypt.getCredential(Credential.Crypt.crypt(username, password)), groups);
     }
 }
