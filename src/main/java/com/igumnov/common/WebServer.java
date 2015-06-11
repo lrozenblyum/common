@@ -1,6 +1,7 @@
 package com.igumnov.common;
 
 
+import com.igumnov.common.reflection.ReflectionException;
 import com.igumnov.common.webserver.*;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.eclipse.jetty.http.HttpVersion;
@@ -257,6 +258,14 @@ public class WebServer {
         }
         servletContext.addServlet(new ServletHolder(s), name);
 
+    }
+
+
+
+    public static void addUserWithEncryptedPassword(String username, String password, String[] groups) throws ReflectionException, IllegalAccessException {
+        Password pwd = new Password("");
+        Reflection.setField(pwd, "_pw", password);
+        loginService.putUser(username, pwd, groups);
     }
 
     public static void addUser(String username, String password, String[] groups) {

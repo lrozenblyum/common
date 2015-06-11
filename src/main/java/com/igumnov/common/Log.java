@@ -27,68 +27,90 @@ public class Log {
 
     public static void info(String message) {
         if (logLevel <= INFO) {
-            out(message);
+            out(message, INFO);
         }
     }
 
     public static void error(String message) {
         if (logLevel <= ERROR) {
-            out(message);
+            out(message, ERROR);
         }
     }
 
     public static void trace(String message) {
         if (logLevel <= TRACE) {
-            out(message);
+            out(message, TRACE);
         }
     }
 
     public static void debug(String message) {
         if (logLevel <= DEBUG) {
-            out(message);
+            out(message, DEBUG);
         }
 
     }
 
     public static void warn(String message) {
         if (logLevel <= WARN) {
-            out(message);
+            out(message, WARN);
         }
     }
 
     public static void info(String message, Exception e) {
         if (logLevel <= INFO) {
-            out(message + " " + Reflection.stackTraceToString(e));
+            out(message + " " + Reflection.stackTraceToString(e), INFO);
         }
     }
 
     public static void error(String message, Exception e) {
         if (logLevel <= ERROR) {
-            out(message + " " + Reflection.stackTraceToString(e));
+            out(message + " " + Reflection.stackTraceToString(e), ERROR);
         }
     }
 
     public static void trace(String message, Exception e) {
         if (logLevel <= TRACE) {
-            out(message + " " + Reflection.stackTraceToString(e));
+            out(message + " " + Reflection.stackTraceToString(e), TRACE);
         }
     }
 
     public static void debug(String message, Exception e) {
         if (logLevel <= DEBUG) {
-            out(message + " " + Reflection.stackTraceToString(e));
+            out(message + " " + Reflection.stackTraceToString(e), DEBUG);
         }
 
     }
 
     public static void warn(String message, Exception e) {
         if (logLevel <= WARN) {
-            out(message + " " + Reflection.stackTraceToString(e));
+            out(message + " " + Reflection.stackTraceToString(e), WARN);
         }
     }
 
-    private static void out(String message) {
-        String line = new Date() + " " + message;
+    private static void out(String message, int level) {
+        String levelTxt;
+        switch (level) {
+            case Log.DEBUG:
+                levelTxt = "DEBUG";
+                break;
+            case Log.TRACE:
+                levelTxt = "TRACE";
+                break;
+            case Log.INFO:
+                levelTxt = "INFO";
+                break;
+            case Log.ERROR:
+                levelTxt = "ERROR";
+                break;
+            case Log.WARN:
+                levelTxt = "WARN";
+                break;
+            default:
+                levelTxt="UNKNOWN";
+
+        }
+
+        String line = new Date() + " " + levelTxt + " " + message;
         if (stdout) {
             System.out.println(line);
         }
