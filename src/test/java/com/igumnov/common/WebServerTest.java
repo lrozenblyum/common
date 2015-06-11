@@ -43,9 +43,9 @@ public class WebServerTest {
         WebServer.addRestrictRule("/new", new String[]{"user"});
 
         WebServer.addHandler("/login", request -> "<form method='POST' action='/j_security_check'>"
-                + "<input type='text' name='j_username'/>"
-                + "<input type='password' name='j_password'/>"
-                + "<input type='submit' value='Login'/></form>"
+                        + "<input type='text' name='j_username'/>"
+                        + "<input type='password' name='j_password'/>"
+                        + "<input type='submit' value='Login'/></form>"
         );
 
         WebServer.addRestController("/get", request -> {
@@ -71,8 +71,10 @@ public class WebServerTest {
 
         });
 
-        WebServer.addTemplates("tmp", 0);
-        File.writeString("<html><body><span th:text=\"${varName}\"></span></body><html>", "tmp/example.html");
+        File.writeString("hello.world=Hello world","tmp/locale.properties");
+
+        WebServer.addTemplates("tmp", 0,"tmp/locale.properties");
+        File.writeString("<html><body><span th:text=\"${varName}\"></span><span th:text=\"#{hello.world}\"></span></body><html>", "tmp/example.html");
         WebServer.addController("/index", (request, model) -> {
             model.put("varName", new Integer("123"));
             return "example";
@@ -87,7 +89,7 @@ public class WebServerTest {
         o.setSalary(1);
         assertEquals(JSON.toString(o), URL.getAllToString("http://localhost:8181/rest/put", WebServer.METHOD_PUT, null, JSON.toString(o)));
 
-        assertEquals("<html><head></head><body><span>123</span></body></html>", URL.getAllToString("http://localhost:8181/index"));
+        assertEquals("<html><head></head><body><span>123</span><span>Hello world</span></body></html>", URL.getAllToString("http://localhost:8181/index"));
         assertNotEquals("new new", URL.getAllToString("http://localhost:8181/new"));
 
         WebServer.stop();

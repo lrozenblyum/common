@@ -177,7 +177,7 @@ public class WebServer {
     }
 
 
-    public static void addTemplates(String folder, long cacheTTL) {
+    public static void addTemplates(String folder, long cacheTTL, String localeFile) throws IOException {
         templateFolder = folder;
         ServletContextTemplateResolver templateResolver =
                 new ServletContextTemplateResolver();
@@ -187,6 +187,9 @@ public class WebServer {
         templateResolver.setCacheTTLMs(cacheTTL);
         templateEngine = new TemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
+        if(localeFile != null) {
+            templateEngine.addMessageResolver(new MessageResolver(localeFile));
+        }
         templateEngine.addDialect(new LayoutDialect());
 
     }
