@@ -45,6 +45,12 @@ public class ControllerHandler extends HttpServlet {
 
         try {
             templateName = controller.process(request, model);
+
+            if(templateName.startsWith("redirect:")) {
+                response.sendRedirect(response.encodeRedirectURL(templateName.substring(9)));
+                return;
+            }
+
         } catch (WebServerException e) {
 
             status = HttpServletResponse.SC_BAD_REQUEST;
