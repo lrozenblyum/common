@@ -265,9 +265,23 @@ public class Transaction {
             for (Annotation annotation : field.getDeclaredAnnotations())
                 if (annotation.annotationType().equals(Id.class)) {
                     pkName = field.getName();
+                    if(field.getType().getName().equals("java.lang.Long") && primaryKey instanceof String) {
+                        return findBy(pkName + "=?",className, Long.valueOf((String)primaryKey)).get(0);
+                    }
+                    if(field.getType().getName().equals("java.lang.Double") && primaryKey instanceof String) {
+                        return findBy(pkName + "=?", className, Double.valueOf((String) primaryKey)).get(0);
+                    }
+                    if(field.getType().getName().equals("java.lang.Float") && primaryKey instanceof String) {
+                        return findBy(pkName + "=?",className, Float.valueOf((String)primaryKey)).get(0);
+                    }
+                    if(field.getType().getName().equals("java.lang.Integer") && primaryKey instanceof String) {
+                        return findBy(pkName + "=?",className, Integer.valueOf((String)primaryKey)).get(0);
+                    }
+                    return findBy(pkName + "=?",className, primaryKey).get(0);
+
                 }
         }
-        return findBy(pkName + "=?",className, primaryKey).get(0);
+        throw new ReflectionException("Cant find PK attribute");
     }
 
     public int deleteBy(String where, Class classObject, Object... params) throws SQLException {
