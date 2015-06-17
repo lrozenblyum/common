@@ -39,6 +39,11 @@ public class ControllerHandler extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        response.setHeader("Cache-Control", "no-store");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+
+
         HashMap<String, Object> model = new HashMap<>();
         String templateName = null;
         int status = HttpServletResponse.SC_OK;

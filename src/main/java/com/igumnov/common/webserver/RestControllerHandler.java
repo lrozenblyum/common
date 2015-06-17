@@ -19,34 +19,40 @@ public class RestControllerHandler extends HttpServlet {
     public RestControllerHandler(RestControllerSimpleInterface i) {
         restControllerSimple = i;
     }
-    public RestControllerHandler(RestControllerInterface i,Class pb) {
+
+    public RestControllerHandler(RestControllerInterface i, Class pb) {
         restController = i;
         postBody = pb;
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request,response);
+        doGet(request, response);
     }
+
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request,response);
+        doGet(request, response);
     }
+
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request,response);
+        doGet(request, response);
     }
 
 
-        @Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 
+        response.setHeader("Cache-Control", "no-store");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
 
         Object postObject = null;
         Object responseObj = null;
         int status = HttpServletResponse.SC_OK;
-        if(request.getMethod().equals("POST") || request.getMethod().equals("PUT") ) {
+        if (request.getMethod().equals("POST") || request.getMethod().equals("PUT")) {
             StringBuilder jb = new StringBuilder();
             String line = null;
             try {
@@ -61,12 +67,10 @@ public class RestControllerHandler extends HttpServlet {
         }
 
         try {
-            if(restController != null)
-            {
-                responseObj =  restController.response(request, postObject);
-            }
-            else {
-                responseObj =  restControllerSimple.response(request);
+            if (restController != null) {
+                responseObj = restController.response(request, postObject);
+            } else {
+                responseObj = restControllerSimple.response(request);
 
             }
         } catch (WebServerException e) {
@@ -74,7 +78,6 @@ public class RestControllerHandler extends HttpServlet {
             status = HttpServletResponse.SC_BAD_REQUEST;
 
         }
-
 
 
         String ret = JSON.toString(responseObj);
@@ -85,7 +88,6 @@ public class RestControllerHandler extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         out.write(ret);
-
 
 
     }
