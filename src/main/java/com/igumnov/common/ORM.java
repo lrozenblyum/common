@@ -81,10 +81,8 @@ public class ORM {
                         Statement stmt = null;
                         try {
                             stmt = c.createStatement();
-                            if(stmt.execute(line) == false) {
-                                Log.error("SQL error: " + line);
-                            }
                             Log.debug(line);
+                            stmt.execute(line);
                         } catch (SQLException e) {
                             Log.error("SQL error: ", e);
                         } finally {
