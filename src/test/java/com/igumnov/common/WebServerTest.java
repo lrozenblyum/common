@@ -35,20 +35,20 @@ public class WebServerTest {
         WebServer.addStaticContentHandler("/static", "tmp");
         File.writeString("123", "tmp/webserver.txt");
 
-        WebServer.addHandler("/script", request -> "Bla-Bla");
+        WebServer.addHandler("/script", (request, response) -> "Bla-Bla");
 
-        WebServer.addHandler("/new", request -> "new new");
+        WebServer.addHandler("/new", (request, response) -> "new new");
 
         WebServer.addAllowRule("/*");
         WebServer.addRestrictRule("/new", new String[]{"user"});
 
-        WebServer.addHandler("/login", request -> "<form method='POST' action='/j_security_check'>"
+        WebServer.addHandler("/login", (request, response) -> "<form method='POST' action='/j_security_check'>"
                         + "<input type='text' name='j_username'/>"
                         + "<input type='password' name='j_password'/>"
                         + "<input type='submit' value='Login'/></form>"
         );
 
-        WebServer.addRestController("/get", request -> {
+        WebServer.addRestController("/get", (request, response) -> {
 
             if (request.getMethod().equals(WebServer.METHOD_GET)) {
                 HashMap<String, String> ret = new HashMap<>();
@@ -61,7 +61,7 @@ public class WebServerTest {
 
         });
 
-        WebServer.addRestController("/rest/put", ObjectDTO.class, (request, postObject) -> {
+        WebServer.addRestController("/rest/put", ObjectDTO.class, (request, response, postObject) -> {
 
             if (request.getMethod().equals(WebServer.METHOD_PUT)) {
                 return postObject;
@@ -75,7 +75,7 @@ public class WebServerTest {
 
         WebServer.addTemplates("tmp", 0,"tmp/locale.properties");
         File.writeString("<html><body><span th:text=\"${varName}\"></span><span th:text=\"#{hello.world}\"></span></body><html>", "tmp/example.html");
-        WebServer.addController("/index", (request, model) -> {
+        WebServer.addController("/index", (request, response, model) -> {
             model.put("varName", new Integer("123"));
             return "example";
         });

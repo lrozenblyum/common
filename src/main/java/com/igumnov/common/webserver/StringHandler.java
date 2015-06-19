@@ -40,7 +40,7 @@ public class StringHandler extends HttpServlet {
         int status = HttpServletResponse.SC_OK;
         String ret = null;
         try {
-            ret = stringInterface.response(request);
+            ret = stringInterface.response(request, response);
         } catch (WebServerException e) {
             ret = e.getMessage();
             status = HttpServletResponse.SC_BAD_REQUEST;

@@ -49,7 +49,7 @@ public class ControllerHandler extends HttpServlet {
         int status = HttpServletResponse.SC_OK;
 
         try {
-            templateName = controller.process(request, model);
+            templateName = controller.process(request, response,  model);
 
             if(templateName.startsWith("redirect:")) {
                 response.sendRedirect(response.encodeRedirectURL(templateName.substring(9)));

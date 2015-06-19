@@ -68,9 +68,9 @@ public class RestControllerHandler extends HttpServlet {
 
         try {
             if (restController != null) {
-                responseObj = restController.response(request, postObject);
+                responseObj = restController.response(request, response, postObject);
             } else {
-                responseObj = restControllerSimple.response(request);
+                responseObj = restControllerSimple.response(request,response);
 
             }
         } catch (WebServerException e) {

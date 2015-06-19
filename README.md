@@ -41,7 +41,7 @@ Maven:
     <dependency>
       <groupId>com.igumnov</groupId>
       <artifactId>common</artifactId>
-      <version>5.6</version>
+      <version>6.0</version>
     </dependency>
 
 
@@ -76,7 +76,7 @@ Security
     WebServer.addUser("username", "password", new String[]{"user_role","admin_role"});
     WebServer.addAllowRule("/*");
     WebServer.addRestrictRule("/script", new String[]{"user"});
-    WebServer.addHandler("/loginPage", (request) -> {
+    WebServer.addHandler("/loginPage", (request, response) -> {
         return "<form method='POST' action='/j_security_check'>"
         + "<input type='text' name='j_username'/>"
         + "<input type='password' name='j_password'/>"
@@ -86,14 +86,14 @@ Security
 CGI/Static
 
     WebServer.addStaticContentHandler("/static", "/path_to_static_content");
-    WebServer.addHandler("/script", (request) -> {
+    WebServer.addHandler("/script", (request, response) -> {
         return "Bla-Bla script result";
     });
 
 
 Rest controller
 
-    WebServer.addRestController("/rest/get", (request) -> {
+    WebServer.addRestController("/rest/get", (request, response) -> {
         if (request.getMethod().equals(WebServer.METHOD_GET)) {
                 ObjectDTO objectDTO = new ObjectDTO();
                 objectDTO.setVal(1);
@@ -104,7 +104,7 @@ Rest controller
     });
 
 
-    WebServer.addRestController("/rest/put", ObjectDTO.class, (request, putOrPostObjectDTO) -> {
+    WebServer.addRestController("/rest/put", ObjectDTO.class, (request, response, putOrPostObjectDTO) -> {
         if (request.getMethod().equals(WebServer.METHOD_PUT)) {
                 putOrPostObjectDTO.getAttr();
                 ...
@@ -118,7 +118,7 @@ Rest controller
 Model-View-Controller with TemplateEngine Framework
 
     WebServer.addTemplates("/path_to_templates");
-    WebServer.addController("/", (request, model) -> {
+    WebServer.addController("/", (request, response, model) -> {
         model.put("varName", new Integer("123"));
         return "home";
     });
