@@ -39,12 +39,23 @@ public class ControllerHandler extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        HashMap<String, Object> model = new HashMap<String, Object>();
+        response.setHeader("Cache-Control", "no-store");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+
+
+        HashMap<String, Object> model = new HashMap<>();
         String templateName = null;
         int status = HttpServletResponse.SC_OK;
 
         try {
-            templateName = controller.process(request, model);
+            templateName = controller.process(request, response,  model);
+
+            if(templateName.startsWith("redirect:")) {
+                response.sendRedirect(response.encodeRedirectURL(templateName.substring(9)));
+                return;
+            }
+
         } catch (WebServerException e) {
 
             status = HttpServletResponse.SC_BAD_REQUEST;

@@ -1,14 +1,13 @@
 package com.igumnov.common;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.igumnov.common.webserver.WebServerException;
+import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class WebServerTest {
 
@@ -27,7 +26,7 @@ public class WebServerTest {
     @Test
     public void testWebServer() throws Exception {
 
-
+        WebServer.setPoolSize(10,40);
         WebServer.init("localhost", 8181);
         WebServer.https(8282, "src/test/resources/key.jks", "storepwd", "keypwd");
         WebServer.security("/login", "/login", "/logout");
@@ -36,28 +35,23 @@ public class WebServerTest {
         WebServer.addStaticContentHandler("/static", "tmp");
         File.writeString("123", "tmp/webserver.txt");
 
-        WebServer.addHandler("/script", (request) -> {
-            return "Bla-Bla";
-        });
+        WebServer.addHandler("/script", (request, response) -> "Bla-Bla");
 
-        WebServer.addHandler("/new", (request) -> {
-            return "new new";
-        });
+        WebServer.addHandler("/new", (request, response) -> "new new");
 
         WebServer.addAllowRule("/*");
         WebServer.addRestrictRule("/new", new String[]{"user"});
 
-        WebServer.addHandler("/login", (request) -> {
-            return "<form method='POST' action='/j_security_check'>"
-                    + "<input type='text' name='j_username'/>"
-                    + "<input type='password' name='j_password'/>"
-                    + "<input type='submit' value='Login'/></form>";
-        });
+        WebServer.addHandler("/login", (request, response) -> "<form method='POST' action='/j_security_check'>"
+                        + "<input type='text' name='j_username'/>"
+                        + "<input type='password' name='j_password'/>"
+                        + "<input type='submit' value='Login'/></form>"
+        );
 
-        WebServer.addRestController("/get", (request) -> {
+        WebServer.addRestController("/get", (request, response) -> {
 
             if (request.getMethod().equals(WebServer.METHOD_GET)) {
-                HashMap<String, String> ret = new HashMap<String, String>();
+                HashMap<String, String> ret = new HashMap<>();
                 ret.put("key1", "val1");
                 ret.put("key2", "val2");
                 return ret;
@@ -67,7 +61,7 @@ public class WebServerTest {
 
         });
 
-        WebServer.addRestController("/rest/put", ObjectDTO.class, (request, postObject) -> {
+        WebServer.addRestController("/rest/put", ObjectDTO.class, (request, response, postObject) -> {
 
             if (request.getMethod().equals(WebServer.METHOD_PUT)) {
                 return postObject;
@@ -77,9 +71,11 @@ public class WebServerTest {
 
         });
 
-        WebServer.addTemplates("tmp", 0);
-        File.writeString("<html><body><span th:text=\"${varName}\"></span></body><html>", "tmp/example.html");
-        WebServer.addController("/index", (request, model) -> {
+        File.writeString("hello.world=Hello world","tmp/locale.properties");
+
+        WebServer.addTemplates("tmp", 0,"tmp/locale.properties");
+        File.writeString("<html><body><span th:text=\"${varName}\"></span><span th:text=\"#{hello.world}\"></span></body><html>", "tmp/example.html");
+        WebServer.addController("/index", (request, response, model) -> {
             model.put("varName", new Integer("123"));
             return "example";
         });
@@ -93,7 +89,7 @@ public class WebServerTest {
         o.setSalary(1);
         assertEquals(JSON.toString(o), URL.getAllToString("http://localhost:8181/rest/put", WebServer.METHOD_PUT, null, JSON.toString(o)));
 
-        assertEquals("<html><head></head><body><span>123</span></body></html>", URL.getAllToString("http://localhost:8181/index"));
+        assertEquals("<html><head></head><body><span>123</span><span>Hello world</span></body></html>", URL.getAllToString("http://localhost:8181/index"));
         assertNotEquals("new new", URL.getAllToString("http://localhost:8181/new"));
 
         WebServer.stop();

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.igumnov</groupId>
     <artifactId>common</artifactId>
-    <version>3.15</version>
+    <version>6.0</version>
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -15,7 +15,6 @@
         <developerConnection>scm:git:git@github.com:evgenyigumnov/common.git</developerConnection>
         <url>git@github.com:evgenyigumnov/common.git</url>
     </scm>
-
     <licenses>
         <license>
             <name>MIT License</name>

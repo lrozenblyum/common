@@ -1,19 +1,18 @@
 package com.igumnov.common.webserver;
 
-
-
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class StringHandler extends HttpServlet {
+public class BinaryHandler extends HttpServlet {
 
-    StringInterface stringInterface;
-    public StringHandler(StringInterface i) {
-        stringInterface = i;
+    BinaryInterface binaryInterface;
+    public BinaryHandler(BinaryInterface i) {
+        binaryInterface = i;
     }
 
     @Override
@@ -33,25 +32,26 @@ public class StringHandler extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        response.setHeader("Cache-Control", "no-store");
-        response.setHeader("Pragma", "no-cache");
-        response.setDateHeader("Expires", 0);
-
         int status = HttpServletResponse.SC_OK;
-        String ret = null;
         try {
-            ret = stringInterface.response(request, response);
+            byte[] ret = binaryInterface.response(request,response);
+            ServletOutputStream responseOutputStream =
+                    response.getOutputStream();
+            responseOutputStream.write(ret);
+            responseOutputStream.flush();
+            responseOutputStream.close();
+
+
         } catch (WebServerException e) {
-            ret = e.getMessage();
             status = HttpServletResponse.SC_BAD_REQUEST;
+            response.setContentType("text/html; charset=utf-8");
+            response.setStatus(status);
+
+            PrintWriter out = response.getWriter();
+
+            out.write(e.getMessage());
         }
 
-        response.setContentType("text/html; charset=utf-8");
-        response.setStatus(status);
-
-        PrintWriter out = response.getWriter();
-
-        out.write(ret);
 
     }
 }

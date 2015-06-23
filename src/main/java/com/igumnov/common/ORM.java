@@ -26,68 +26,70 @@ public class ORM {
 
     }
 
-    public static void applyDDL(String sqlFolder) throws java.sql.SQLException, IOException, ReflectionException, IllegalAccessException, InstantiationException {
+    public static void applyDDL(String sqlFolder) throws SQLException, IOException, ReflectionException, IllegalAccessException, InstantiationException {
         Connection con = null;
-        int i=1;
-        ResultSet tables=null;
+        int i = 1;
+        ResultSet tables = null;
         try {
             con = ds.getConnection();
             DatabaseMetaData dbm = con.getMetaData();
             tables = dbm.getTables(null, null, "DDLHISTORY", null);
+
             if (tables.next()) {
-                ArrayList<Object> ret = findBy("true order by id limit 1", DDLHistory.class);
-                i = 1 + ((DDLHistory)ret.get(0)).getId();
+                ArrayList<Object> ret = findBy("true order by id desc limit 1", DDLHistory.class);
+                i = 1 + ((DDLHistory) ret.get(0)).getId();
             } else {
-
-                Statement stmt=null;
+                ResultSet tables2 = null;
                 try {
-                    stmt = con.createStatement();
-                    String sql = "CREATE TABLE DDLHistory (id INT PRIMARY KEY, applyDate DATE)";
-                    stmt.execute(sql);
-                    Log.debug(sql);
-                } finally {
-                    if(stmt!=null) {
+                    tables2 = dbm.getTables(null, null, "DDLHistory", null);
+                    if (tables2.next()) {
+                        ArrayList<Object> ret = findBy("true order by id desc limit 1", DDLHistory.class);
+                        i = 1 + ((DDLHistory) ret.get(0)).getId();
+                    } else {
+                        Statement stmt = null;
                         try {
-                            stmt.close();
-                        } catch (Exception e) {}
+                            stmt = con.createStatement();
+                            String sql = "CREATE TABLE DDLHistory (id INT PRIMARY KEY, applyDate DATE)";
+                            stmt.execute(sql);
+                            Log.debug(sql);
+                        } finally {
+                            if (stmt != null) {
+                                stmt.close();
+                            }
+                        }
                     }
+
+                } finally {
+                    if (tables2 != null) tables.close();
                 }
-
-
             }
 
             tables.close();
 
         } finally {
-            try {
-                if (con != null) con.close();
-            } catch (Exception e) {
-            }
-            try {
-                if (tables != null) tables.close();
-            } catch (Exception e) {
-            }
+            if (con != null) con.close();
+            if (tables != null) tables.close();
 
         }
 
         try {
             for (; true; i++) {
-                Connection c=ds.getConnection();
+                Connection c = ds.getConnection();
                 try {
                     c.setAutoCommit(false);
                     File.readLines(sqlFolder + "/" + i + ".sql").forEach((line) -> {
                         Statement stmt = null;
                         try {
                             stmt = c.createStatement();
-                            stmt.execute(line);
                             Log.debug(line);
-
+                            stmt.execute(line);
                         } catch (SQLException e) {
                             Log.error("SQL error: ", e);
                         } finally {
                             try {
                                 if (stmt != null) stmt.close();
                             } catch (Exception e) {
+                                Log.error("SQL error: ", e);
                             }
                         }
                     });
@@ -97,12 +99,9 @@ public class ORM {
                     ddl.setApplyDate(new java.util.Date());
                     insert(ddl);
                 } finally {
-                    try {
-                        if (c != null) {
-                            c.setAutoCommit(true);
-                            c.close();
-                        }
-                    } catch (Exception e) {
+                    if (c != null) {
+                        c.setAutoCommit(true);
+                        c.close();
                     }
                 }
             }
@@ -117,103 +116,66 @@ public class ORM {
     }
 
 
-
     public static Object update(Object obj) throws IllegalAccessException, SQLException {
-        Transaction tx = null;
-        try {
-            tx = ORM.beginTransaction();
-            return tx.update(obj);
 
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
+        Object ret;
+        Transaction tx = ORM.beginTransaction();
+        ret = tx.update(obj);
+        tx.commit();
+        return ret;
 
     }
 
 
     public static Object insert(Object obj) throws IllegalAccessException, SQLException, ReflectionException {
-        Transaction tx = null;
-        try {
-            tx = ORM.beginTransaction();
-            return tx.insert(obj);
-
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
+        Object ret;
+        Transaction tx  = ORM.beginTransaction();
+        ret = tx.insert(obj);
+        tx.commit();
+        return ret;
 
     }
 
-    public static ArrayList<Object> findBy(String where, Class classObject, Object... params) throws SQLException, IllegalAccessException, InstantiationException, ReflectionException {
-        Transaction tx = null;
-        try {
-            tx = ORM.beginTransaction();
-            return tx.findBy(where,classObject,params);
-
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
+    public static ArrayList<Object> findBy(String where, Class classObject, Object... params) throws SQLException, IllegalAccessException, InstantiationException, ReflectionException, IOException {
+        ArrayList<Object> ret;
+        Transaction tx = ORM.beginTransaction();
+        ret = tx.findBy(where, classObject, params);
+        tx.commit();
+        return ret;
     }
 
-    public static Object findOne(Class className, Object primaryKey) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException {
-        Transaction tx = null;
-        try {
-            tx = ORM.beginTransaction();
-            return tx.findOne(className,primaryKey);
-
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
+    public static Object findOne(Class className, Object primaryKey) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException, IOException {
+        Object ret;
+        Transaction tx  = ORM.beginTransaction();
+        ret = tx.findOne(className, primaryKey);
+        tx.commit();
+        return ret;
     }
 
     public static int deleteBy(String where, Class classObject, Object... params) throws SQLException {
-        Transaction tx = null;
-        try {
-            tx = ORM.beginTransaction();
-            return tx.deleteBy(where,classObject,params);
-
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
+        int ret;
+        Transaction tx  = ORM.beginTransaction();
+        ret = tx.deleteBy(where, classObject, params);
+        tx.commit();
+        return ret;
     }
 
     public static int delete(Object obj) throws IllegalAccessException, SQLException {
-        Transaction tx = null;
-        try {
-            tx = ORM.beginTransaction();
-            return tx.delete(obj);
-
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
+        int ret;
+        Transaction tx  = ORM.beginTransaction();
+        ret = tx.delete(obj);
+        tx.commit();
+        return ret;
     }
 
-    public static ArrayList<Object> findAll(Class classObject) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException {
+    public static ArrayList<Object> findAll(Class classObject) throws SQLException, ReflectionException, InstantiationException, IllegalAccessException, IOException {
 
-        Transaction tx = null;
-        try {
-            tx = ORM.beginTransaction();
-            return tx.findAll(classObject);
-
-        } finally {
-            if (tx != null) {
-                tx.commit();
-            }
-        }
-
+        ArrayList<Object> ret;
+        Transaction tx = ORM.beginTransaction();
+        ret = tx.findAll(classObject);
+        tx.commit();
+        return ret;
     }
-
 
 
 }

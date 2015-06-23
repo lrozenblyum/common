@@ -1,6 +1,7 @@
 package com.igumnov.common;
 
 
+import com.igumnov.common.reflection.ReflectionException;
 import com.igumnov.common.webserver.*;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.eclipse.jetty.http.HttpVersion;
@@ -17,7 +18,9 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.security.Constraint;
+import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import org.eclipse.jetty.util.security.Password;
@@ -43,22 +46,30 @@ public class WebServer {
 
 
     private static Server server;
-    private static ArrayList<ContextHandler> handlers = new ArrayList<ContextHandler>();
+    private static ArrayList<ContextHandler> handlers = new ArrayList<>();
     private static String templateFolder;
     private static ServerConnector connector;
     private static ServerConnector https;
     private static ConstraintSecurityHandler securityHandler;
     private static ServletContextHandler servletContext;
     private static HashLoginService loginService = new HashLoginService();
+    private static QueuedThreadPool threadPool = null;
 
     private WebServer() {
 
     }
 
+    public static void setPoolSize(int min, int max) {
+        threadPool = new QueuedThreadPool(max, min);
+    }
 
     public static void init(String hostName, int port) {
 
-        server = new Server();
+        if (threadPool != null) {
+            server = new Server(threadPool);
+        } else {
+            server = new Server();
+        }
 
         connector = new ServerConnector(server);
         connector.setHost(hostName);
@@ -111,6 +122,13 @@ public class WebServer {
         addServlet(new StringHandler(i), name);
     }
 
+    public static void addBinaryHandler(String name, BinaryInterface i) {
+
+
+        addServlet(new BinaryHandler(i), name);
+    }
+
+
     public static void addRestController(String name, Class c, RestControllerInterface i) {
 
 
@@ -159,7 +177,7 @@ public class WebServer {
     }
 
 
-    public static void addTemplates(String folder, long cacheTTL) {
+    public static void addTemplates(String folder, long cacheTTL, String localeFile) throws IOException {
         templateFolder = folder;
         ServletContextTemplateResolver templateResolver =
                 new ServletContextTemplateResolver();
@@ -169,6 +187,9 @@ public class WebServer {
         templateResolver.setCacheTTLMs(cacheTTL);
         templateEngine = new TemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
+        if(localeFile != null) {
+            templateEngine.addMessageResolver(new MessageResolver(localeFile));
+        }
         templateEngine.addDialect(new LayoutDialect());
 
     }
@@ -182,7 +203,7 @@ public class WebServer {
     public static void addRestrictRule(String path, String[] roles) {
         Constraint constraint = new Constraint();
         constraint.setName(Constraint.__FORM_AUTH);
-        ;
+
         constraint.setRoles(roles);
         constraint.setAuthenticate(true);
 
@@ -196,7 +217,7 @@ public class WebServer {
     public static void addAllowRule(String path) {
         Constraint constraint = new Constraint();
         constraint.setName(Constraint.__FORM_AUTH);
-        ;
+
         constraint.setAuthenticate(false);
 
         ConstraintMapping constraintMapping = new ConstraintMapping();
@@ -243,7 +264,13 @@ public class WebServer {
 
     }
 
+
+
+    public static void addUserWithEncryptedPassword(String username, String password, String[] groups) throws ReflectionException, IllegalAccessException {
+        loginService.putUser(username, Credential.Crypt.getCredential(password), groups);
+    }
+
     public static void addUser(String username, String password, String[] groups) {
-        loginService.putUser(username, new Password(password), groups);
+        loginService.putUser(username, Credential.Crypt.getCredential(Credential.Crypt.crypt(username, password)), groups);
     }
 }
